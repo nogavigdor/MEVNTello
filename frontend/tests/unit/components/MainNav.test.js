@@ -8,4 +8,10 @@ describe('MainNav', () => {
     const appName = screen.getByText('MEVNTello - A Projects Management App')
     expect(appName).toBeInTheDocument()
   })
+  it('displays menu items for navigation', () => {
+    render(MainNav)
+    const navigationMenuItems = screen.getAllByRole('listitem')
+    const navigationMenuTexts = navigationMenuItems.map((item) => item.textContent)
+    expect(navigationMenuTexts).toEqual(['Login'])
+  })
 })
