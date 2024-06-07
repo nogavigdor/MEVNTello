@@ -8,9 +8,13 @@ export default {
         sans: ['Nunito Sans', ...defaultTheme.fontFamily.sans]
       },
       colors: {
-        'brand-blue': '#2D9CDB',
-        'brand-red': '#EB5757',
-        'brand-green': '#27AE60'
+        primary: '#4CAF50', // Green
+        secondary: '#FF9800', // Orange
+        accent: '#3F51B5', // Indigo
+        error: '#F44336', // Red
+        info: '#2196F3', // Blue
+        success: '#4CAF50', // Green
+        warning: '#FFEB3B', // Yellow
       }
     }
   },
