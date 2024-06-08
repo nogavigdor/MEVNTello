@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import apiClient from '../services/apiClient';
 
 interface User {
   _id: string;
@@ -30,7 +30,7 @@ export const useUserStore = defineStore('users', {
   actions: {
     async register(userDetails: RegisterUserDetails) {
       try {
-        const response = await axios.post('https://mevntello-backend.onrender.com/api/register', userDetails);
+        const response = await apiClient.post('/login', credentials);
         this.user = response.data.user;
         this.isAuthenticated = true;
       } catch (error) {

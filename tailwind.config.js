@@ -1,11 +1,12 @@
-/** @type {import('tailwindcss').Config} */
-const defaultTheme = require('tailwindcss/defaultTheme')
+// tailwind.config.js
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 export default {
   content: ['./index.html', './src/**/*.{vue,js,ts}'],
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Nunito Sans', ...defaultTheme.fontFamily.sans]
+        sans: ['Nunito Sans', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         primary: '#4CAF50', // Green
@@ -15,8 +16,8 @@ export default {
         info: '#2196F3', // Blue
         success: '#4CAF50', // Green
         warning: '#FFEB3B', // Yellow
-      }
-    }
+      },
+    },
   },
-  plugins: []
-}
+  plugins: [],
+};
