@@ -2,8 +2,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 
 interface User {
-  id: number;
-  name: string;
+  _id: string;
   email: string;
 }
 
@@ -31,7 +30,7 @@ export const useUserStore = defineStore('users', {
   actions: {
     async register(userDetails: RegisterUserDetails) {
       try {
-        const response = await axios.post('/api/register', userDetails);
+        const response = await axios.post('https://mevntello-backend.onrender.com/api/register', userDetails);
         this.user = response.data.user;
         this.isAuthenticated = true;
       } catch (error) {
@@ -41,11 +40,12 @@ export const useUserStore = defineStore('users', {
     },
     async login(credentials: LoginCredentials) {
       try {
-        const response = await axios.post('/api/login', credentials);
+        const response = await axios.post('https://mevntello-backend.onrender.com/api/login', credentials);
         this.user = response.data.user;
         this.isAuthenticated = true;
       } catch (error) {
         console.error('Login failed:', error);
+        throw error;
       }
     },
     logout() {
