@@ -8,4 +8,18 @@ const apiClient = axios.create({
   },
 });
 
+apiClient.interceptors.request.use(
+    (config) => {
+      const userStore = useUserStore();
+      const token = userStore.token || localStorage.getItem('authToken');
+      if (token) {
+        config.headers['auth-token'] = token; // Use the custom header your backend expects
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
 export default apiClient;
