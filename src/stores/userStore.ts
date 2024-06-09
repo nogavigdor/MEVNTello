@@ -9,6 +9,7 @@ interface User {
 interface UsersState {
   user: User | null;
   isAuthenticated: boolean;
+  token: string | null;
 }
 
 interface RegisterUserDetails {
@@ -25,12 +26,13 @@ interface LoginCredentials {
 export const useUserStore = defineStore('users', {
   state: (): UsersState => ({
     user: null,
-    isAuthenticated: false,
+    isAuthenticated: !!localStorage.getItem('authToken'),
+    token: localStorage.getItem('authToken'),
   }),
   actions: {
     async register(userDetails: RegisterUserDetails) {
       try {
-        const response = await apiClient.post('/login', credentials);
+        const response = await apiClient.post('/register', credentials);
         this.user = response.data.user;
         this.isAuthenticated = true;
       } catch (error) {
@@ -40,9 +42,11 @@ export const useUserStore = defineStore('users', {
     },
     async login(credentials: LoginCredentials) {
       try {
-        const response = await axios.post('https://mevntello-backend.onrender.com/api/login', credentials);
+        const response = await apiClient.post('/login', credentials);
         this.user = response.data.user;
         this.isAuthenticated = true;
+        this.token = response.data.token;
+        localStorage.setItem('authToken', this.token);
       } catch (error) {
         console.error('Login failed:', error);
         throw error;
@@ -51,6 +55,11 @@ export const useUserStore = defineStore('users', {
     logout() {
       this.user = null;
       this.isAuthenticated = false;
+      this.token = null;
+      localStorage.removeItem('authToken');
+    },
+    isAuthenticated(): boolean {
+      return this.isAuthenticated;
     },
   },
 });
