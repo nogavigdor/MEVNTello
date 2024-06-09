@@ -4,6 +4,7 @@ import apiClient from '../services/apiClient';
 interface User {
   _id: string;
   email: string;
+  username: string;
 }
 
 interface UsersState {
@@ -42,13 +43,19 @@ export const useUserStore = defineStore('users', {
     },
     async login(credentials: LoginCredentials) {
       try {
+        console.log('Logging in with credentials:', credentials);
         const response = await apiClient.post('/user/login', credentials);
+        console.log('Logging in with credentials:', credentials);
         this.user = response.data.user;
         this.isAuthenticated = true;
         this.token = response.data.token;
         localStorage.setItem('authToken', this.token);
+        localStorage.setItem('user', JSON.stringify(this.user));
+        console.log('Token after login:', this.token);  // Log the token
+        console.log('User after login:', this.user);  // Log the user
+        console.log('Is authenticated:', this.isAuthenticated);  // Log the authentication status
       } catch (error) {
-        console.error('Login failed:', error);
+        console.error('Login failed:', error.response?.data || error.message);
         throw error;
       }
     },

@@ -1,7 +1,6 @@
 <template>
   <div class="flex flex-col items-center justify-center h-screen">
     <div class="w-full max-w-md">
-      <h1 class="text-3xl font-semibold text-center mb-6">Login</h1>
       <form @submit.prevent="login">
         <div class="mb-4">
           <label for="email" class="block text-gray-700">Email</label>
