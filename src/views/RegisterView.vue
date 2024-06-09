@@ -47,6 +47,23 @@
   </template>
   
   <script setup lang="ts">
+    import { ref } from 'vue';
+    import { useUserStore } from '@/stores/userStore';
+
+    const form = ref({ username: '', email: '', password: '' });
+    const userStore = useUserStore();
+
+    const register = async () => {
+      try {
+        await userStore.register(form.value);
+        alert('Registration successful');
+      } catch (error) {
+        alert('Registration failed');
+        console.error(error);
+      }
+    };
+
+    
 
   </script>
   
