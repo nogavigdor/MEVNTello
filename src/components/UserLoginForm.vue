@@ -1,54 +1,57 @@
 <template>
-  <div class="flex flex-col items-center justify-center h-screen">
-    <div class="w-full max-w-md">
-      <form @submit.prevent="login">
-        <div class="mb-4">
-          <label for="email" class="block text-gray-700">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label for="password" class="block text-gray-700">Password</label>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
-        >
-          Login
-        </button>
-      </form>
+  <form @submit.prevent="handleLogin">
+    <div class="mb-4 relative">
+      <label class="block text-gray-700 mb-1">Email</label>
+      <div class="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-primary">
+        <font-awesome-icon icon="envelope" class="w-5 h-5 text-primary mx-3" />
+        <input
+          v-model="form.email"
+          type="email"
+          class="w-full p-3 pl-10 pr-3 focus:outline-none rounded-lg"
+          required
+        />
+      </div>
     </div>
-  </div>
+    <div class="mb-4 relative">
+      <label class="block text-gray-700 mb-1">Password</label>
+      <div class="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-primary">
+        <font-awesome-icon icon="lock" class="w-5 h-5 text-primary mx-3" />
+        <input
+          v-model="form.password"
+          type="password"
+          class="w-full p-3 pl-10 pr-3 focus:outline-none rounded-lg"
+          required
+        />
+      </div>
+    </div>
+    <button
+      type="submit"
+      class="w-full bg-primary text-white p-3 rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary"
+    >
+      Login
+    </button>
+  </form>
 </template>
 
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 
-const email = ref('');
-const password = ref('');
-const userStore = useUserStore();
 
-const login = async () => {
+const form = ref({ email: '', password: '' });
+const userStore = useUserStore();
+const emit = defineEmits(['loginSuccess']);
+
+const handleLogin = async () => {
   try {
-    await userStore.login({ email: email.value, password: password.value });
+    console.log('Form Data:', form.value);  // Log form data
+    await userStore.login(form.value);
     alert('Login successful');
+    emit('loginSuccess');
   } catch (error) {
     alert('Login failed');
-    console.error(error);
+    console.error('Login failed:', error.response?.data || error.message);
   }
 };
 </script>
