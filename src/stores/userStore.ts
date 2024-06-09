@@ -32,7 +32,7 @@ export const useUserStore = defineStore('users', {
   actions: {
     async register(userDetails: RegisterUserDetails) {
       try {
-        const response = await apiClient.post('/register', credentials);
+        const response = await apiClient.post('/user/register', userDetails);
         this.user = response.data.user;
         this.isAuthenticated = true;
       } catch (error) {
@@ -42,7 +42,7 @@ export const useUserStore = defineStore('users', {
     },
     async login(credentials: LoginCredentials) {
       try {
-        const response = await apiClient.post('/login', credentials);
+        const response = await apiClient.post('/user/login', credentials);
         this.user = response.data.user;
         this.isAuthenticated = true;
         this.token = response.data.token;

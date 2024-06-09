@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -10,10 +10,9 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
     (config) => {
-      const userStore = useUserStore();
-      const token = userStore.token || localStorage.getItem('authToken');
+      const token = localStorage.getItem('authToken');
       if (token) {
-        config.headers['auth-token'] = token; // Use the custom header your backend expects
+        config.headers['auth-token'] = token; // Use 'auth-token' instead of 'Authorization'
       }
       return config;
     },
@@ -21,5 +20,5 @@ apiClient.interceptors.request.use(
       return Promise.reject(error);
     }
   );
-
+  
 export default apiClient;
