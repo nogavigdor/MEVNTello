@@ -49,6 +49,7 @@ const handleLogin = async () => {
     await userStore.login(form.value);
     alert('Login successful');
     emit('loginSuccess');
+    // Redirect to the dashboard after successful login
     router.push('/dashboard');
   } catch (error) {
     alert('Login failed');

@@ -3,6 +3,7 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
 import { FontAwesomeIcon } from './fontAwesome';  // Import FontAwesome setup
+import './index.css'; // Import the global css file
 
 const app = createApp(App);
 const pinia = createPinia();

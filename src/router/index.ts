@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useUserStore } from '@/stores/userStore';
 
 //import UserRegister from '../components/UserRegister.vue';
 
@@ -27,12 +28,17 @@ const isAuthenticated = () => {
 }
 
 //Navigation guards
-
-//This guard will redirect the user to the login page if they are not authenticated
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'Login' && to.name !== 'Register' && !isAuthenticated()) next({ name: 'Login' });
-  else next();
+  const userStore = useUserStore();
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!userStore.isAuthenticated) {
+      // Redirect to login page if not authenticated
+      next({ name: 'Login' });
+    } else {
+      next();
+    }
+  } else {
+    next(); // make sure to always call next()!
+  }
 });
-
-
 export default router;

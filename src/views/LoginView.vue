@@ -1,6 +1,5 @@
 <template>
     <div class="font-sans min-h-screen bg-gray-100">
-      <Header />
       <div class="flex items-center justify-center mt-8">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
           <h1 class="text-3xl font-bold mb-6 text-primary">Login</h1>

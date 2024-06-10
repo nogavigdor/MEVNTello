@@ -53,6 +53,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/userStore';
+import router from '@/router';
 
 const form = ref({ username: '', email: '', password: '' });
 const userStore = useUserStore();
@@ -61,6 +62,8 @@ const handleRegister = async () => {
   try {
     await userStore.register(form.value);
     alert('Registration successful');
+    // Redirect to the login page after successful registration
+    router.push('/login');
   } catch (error) {
     alert('Registration failed');
     console.error(error);
