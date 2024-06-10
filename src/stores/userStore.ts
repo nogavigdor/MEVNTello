@@ -1,104 +1,94 @@
 import { defineStore } from 'pinia';
 import apiClient from '../services/apiClient';
 
-// Define the User interface
+// Interface for the User object.
 interface User {
   _id: string;
   email: string;
   username: string;
 }
 
-// Define the UsersState interface
+// State structure for the user store.
 interface UsersState {
   user: User | null;
-  isAuthenticated: boolean;
   token: string | null;
 }
 
-// Define the RegisterUserDetails interface
+// Structure for user registration details.
 interface RegisterUserDetails {
   username: string;
   email: string;
   password: string;
 }
 
-// Define the LoginCredentials interface
+// Structure for user login credentials.
 interface LoginCredentials {
   email: string;
   password: string;
 }
 
-//create the user store using  Pinia
+// Define the user store using Pinia.
 export const useUserStore = defineStore('users', {
+  // Initial state of the store.
   state: (): UsersState => ({
-    //user object to hold the user information
-    user: null,  
-    // Check if the user is authenticated
-    isAuthenticated: !!localStorage.getItem('authToken'), 
-    // Token for authenticated user
-    token: localStorage.getItem('authToken'),
+    user: null, // Initially, no user is logged in.
+    token: localStorage.getItem('authToken') || null, // Get the auth token from localStorage or default to null.
   }),
   actions: {
-    // Register a new user
+    // Action to register a new user.
     async register(userDetails: RegisterUserDetails) {
       try {
-        // Make a POST request to the /user/register endpoint
+        // Make a POST request to the register endpoint.
         const response = await apiClient.post('/user/register', userDetails);
-        // Set the user object and isAuthenticated to true
-        this.user = response.data.user;
-        this.isAuthenticated = true;
-      } catch (error) {
-        console.error('Registration failed:', error.response?.data || error.message);
-        // Throw the error to the calling function
+      } catch (error: any) {
+        // If an error occurs, log it and rethrow.
+        console.error('Registration failed:', error?.response?.data || error.message);
         throw error;
       }
     },
-    //Log in an existing user
+    // Action to log in a user.
     async login(credentials: LoginCredentials) {
       try {
-        console.log('Logging in with credentials:', credentials);
-        // Make a POST request to the /user/login endpoint
+        // Make a POST request to the login endpoint.
         const response = await apiClient.post('/user/login', credentials);
-        console.log('Logging in with credentials:', credentials);
-        //set the user data from the response
+        // Update the state with the user data and token from the response.
         this.user = response.data.user;
-        //set isAuthenticated to true
-        this.isAuthenticated = true;
-        //set the token from the response
         this.token = response.data.token;
-        //store the token and user data in the local storage
-        localStorage.setItem('authToken', this.token);
+        // Store the token and user data in localStorage.
+        localStorage.setItem('authToken', this.token || '');
         localStorage.setItem('user', JSON.stringify(this.user));
-      } catch (error) {
-        console.error('Login failed:', error.response?.data || error.message);
-        // Throw the error to the calling function
+      } catch (error: any) {
+        // If an error occurs, log it and rethrow.
+        console.error('Login failed:', error?.response?.data || error.message);
         throw error;
       }
     },
-    // Log out the user
+    // Action to log out a user.
     logout() {
+      // Clear user and token from the state.
       this.user = null;
-      this.isAuthenticated = false;
       this.token = null;
+      // Remove user data and token from localStorage.
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
     },
-    //check if the user is authenticated
-    isAuthenticated(): boolean {
-      return this.isAuthenticated;
-    },
   },
-  //getters to get the user data
   getters: {
+    // Getter to check if the user is authenticated.
+    isAuthenticated: (state) => !!state.token, // Returns true if there is a token.
+    // Getter to retrieve the current token.
     getToken(state): string | null {
       return state.token;
     },
+    // Getter to retrieve the current username.
     getUsername(state): string | null {
       return state.user?.username || null;
     },
+    // Getter to retrieve the current email.
     getEmail(state): string | null {
       return state.user?.email || null;
     },
+    // Getter to retrieve the current user object.
     getUser(state): User | null {
       return state.user;
     },
