@@ -41,8 +41,6 @@ export const useUserStore = defineStore('users', {
       try {
         // Make a POST request to the register endpoint.
         const response = await apiClient.post('/user/register', userDetails);
-        // Redirect to login page after successful registration
-        router.push('/login');
       } catch (error: any) {
         // If an error occurs, log it and rethrow.
         console.error('Registration failed:', error?.response?.data || error.message);
