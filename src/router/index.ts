@@ -15,6 +15,14 @@ const routes = [
   { path: '/login',
     name: 'Login',
      component: () => import('../views/LoginView.vue') },
+
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('../views/DashboardView.vue'),
+    meta: { requiresAuth: true }
+  },
+
 ];
 
 const router = createRouter({
@@ -30,13 +38,9 @@ const isAuthenticated = () => {
 //Navigation guards
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!userStore.isAuthenticated) {
-      // Redirect to login page if not authenticated
-      next({ name: 'Login' });
-    } else {
-      next();
-    }
+  if (to.matched.some(record => record.meta.requiresAuth) && !userStore.isAuthenticated) {
+    // Redirect to login page if not authenticated
+    next({ name: 'Login' });
   } else {
     next(); // make sure to always call next()!
   }
