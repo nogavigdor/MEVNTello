@@ -1,46 +1,34 @@
 import { defineStore } from 'pinia';
 import apiClient from '../services/apiClient';
-import router from '../router';
-
-// Interface for the User object.
-interface User {
-  _id: string;
-  email: string;
-  username: string;
-}
-
-// State structure for the user store.
-interface UsersState {
-  user: User | null;
-  token: string | null;
-}
-
-// Structure for user registration details.
-interface RegisterUserDetails {
-  username: string;
-  email: string;
-  password: string;
-}
-
-// Structure for user login credentials.
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
+import { User } from '../interfaces/IUser';
+import { UsersState } from '../interfaces/IUserState';
+import { LoginCredentials } from '../interfaces/ILoginCredentials';
+import { RegisterUserDetails } from '../interfaces/IRegisterUserDetails';
 
 // Define the user store using Pinia.
 export const useUserStore = defineStore('users', {
   // Initial state of the store.
   state: (): UsersState => ({
-    user: null, // Initially, no user is logged in.
-    token: localStorage.getItem('authToken') || null, // Get the auth token from localStorage or default to null.
-  }),
+      user: null, // Initially, no user is logged in.
+      token: localStorage.getItem('authToken') || null, // Get the auth token from localStorage or default to null.
+      users: []
+    }),
   actions: {
+    // Action to fetch all users.
+    async fetchAllUsers() {
+      try {
+        const response = await apiClient.get('/users');
+        this.users = response.data;
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+        throw error;
+      }
+    },
     // Action to register a new user.
     async register(userDetails: RegisterUserDetails) {
       try {
         // Make a POST request to the register endpoint.
-        const response = await apiClient.post('/user/register', userDetails);
+        const response = await apiClient.post('/users/register', userDetails);
       } catch (error: any) {
         // If an error occurs, log it and rethrow.
         console.error('Registration failed:', error?.response?.data || error.message);
@@ -51,7 +39,7 @@ export const useUserStore = defineStore('users', {
     async login(credentials: LoginCredentials) {
       try {
         // Make a POST request to the login endpoint.
-        const response = await apiClient.post('/user/login', credentials);
+        const response = await apiClient.post('/users/login', credentials);
         // Update the state with the user data and token from the response.
         this.user = response.data.user;
         this.token = response.data.token;
@@ -92,6 +80,10 @@ export const useUserStore = defineStore('users', {
     // Getter to retrieve the current user object.
     getUser(state): User | null {
       return state.user;
+    },
+    // Getter to retrieve all users.
+    getUsers(state): User[] {
+      return state.users;
     },
   },
 });

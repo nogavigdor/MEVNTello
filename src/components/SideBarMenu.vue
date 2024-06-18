@@ -7,8 +7,8 @@
         <li>
           <router-link to="/projects/new" class="block">New Project</router-link>
         </li>
-        <li v-for="project in projects" :key="project.id">
-          <router-link :to="`/projects/${project.id}`" class="block">
+        <li v-for="project in projects" :key="project._id">
+          <router-link :to="`/projects/${project._id}`" class="block">
             {{ project.name }}
           </router-link>
         </li>
@@ -18,12 +18,12 @@
   
   <script setup lang="ts">
   import { onMounted, ref, computed } from 'vue';
-  import { useProjectsStore } from '@/stores/projectStore';
+  import { useProjectStore } from '@/stores/projectStore';
   import { useUserStore } from '@/stores/userStore';
   import { Project } from '@/interfaces/IProject';
   
   const userStore = useUserStore();
-  const projectsStore = useProjectsStore();
+  const projectsStore = useProjectStore();
   
   const projects = ref<Project[]>([]);
   

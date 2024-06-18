@@ -22,6 +22,18 @@ const routes = [
     component: () => import('../views/DashboardView.vue'),
     meta: { requiresAuth: true }
   },
+  {
+    path : '/projects',
+    name : 'Projects',
+    component : () => import('../views/MyProjectsView.vue'),
+  },
+  {
+    path: '/projects/new',
+    name: 'NewProject',
+    component: () => import('../views/NewProjectView.vue'),
+
+  }
+
 
 ];
 

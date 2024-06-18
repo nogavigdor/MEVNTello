@@ -8,10 +8,10 @@
   <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
-  import { useProjectsStore } from '@/stores/projectsStore';
+  import { useProjectStore } from '@/stores/projectStore';
   
   const route = useRoute();
-  const projectsStore = useProjectsStore();
+  const projectsStore = useProjectStore();
   
   const project = ref(null);
   
