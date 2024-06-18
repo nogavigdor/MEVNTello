@@ -1,4 +1,4 @@
 export interface TeamMember {
-    userId: string;  // Use string for IDs in frontend
+    userId: string;  
     role: 'leader' | 'member';
   }
