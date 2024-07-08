@@ -17,7 +17,7 @@
   import { useProjectStore } from '@/stores/projectStore';
   
   const projectsStore = useProjectStore();
-  const projects = ref(projectStore.getProjects : []);
+  const projects = ref(projectsStore.projects);
   
   onMounted(async () => {
     projects.value = await projectsStore.fetchProjects();
