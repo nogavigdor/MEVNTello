@@ -36,7 +36,8 @@
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Assign Team Members and Roles</label>
         <div v-for="user in users" :key="user.userId" class="flex items-center space-x-3 mb-2">
-          <input type="checkbox" v-model="selectedTeamMembers" :value="user.userId">
+         <!-- Make sure this is inside the v-for loop -->
+          <input type="checkbox" :value="user.userId" @change="handleCheckboxChange($event, user.userId)">
           <span>{{ user.username }}</span>
           <select v-model="roles[user.userId]">
             <option value="member">Member</option>
@@ -82,6 +83,17 @@ onMounted(async () => {
   users.value = userStore.getUsers;
   users.value.forEach(user => roles.value[user.userId] = 'member'); // Default to 'member'
 });
+
+// Handle checkbox change event
+const handleCheckboxChange = (event: Event, userId: string) => {
+  const checkbox = event.target as HTMLInputElement;
+  if (checkbox.checked) {
+    selectedTeamMembers.value.push(userId);
+  } else {
+    selectedTeamMembers.value = selectedTeamMembers.value.filter(id => id !== userId);
+  }
+};
+
 
 // Submit form data including dynamic role assignments
 const submitForm = async () => {
