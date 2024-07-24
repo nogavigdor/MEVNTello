@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { User } from '@/interfaces/IUser'; 
@@ -61,44 +61,44 @@ import { TeamMember } from '@/interfaces/ITeamMember';
 const userStore = useUserStore();
 const projectStore = useProjectStore();
 
-
 const users = ref<User[]>([]);
 
-// Setup reactive form data and roles state
-const form = reactive<Project>({
+// Setup ref data for form and roles
+const form = ref<Project>({
   name: '',
   description: '',
-  startDate: new Date(),
-  endDate: new Date(),
+  startDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
+  endDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
   allocatedHours: 0,
   teamMembers: []
 });
-const roles = reactive<Record<string, string>>({});
+
+const roles = ref<Record<string, string>>({});
 const selectedTeamMembers = ref<string[]>([]);
 
 // Fetch users and initialize roles on component mount
 onMounted(async () => {
   await userStore.fetchAllUsers();
   users.value = userStore.getUsers;
-  users.value.forEach(user => roles[user.userId] = 'member'); // Default to 'member'
+  users.value.forEach(user => roles.value[user.userId] = 'member'); // Default to 'member'
 });
 
 // Submit form data including dynamic role assignments
 const submitForm = async () => {
   const projectData: Project = {
-    ...form,
-    startDate: new Date(form.startDate),
-    endDate: new Date(form.endDate),
+    ...form.value,
+    startDate: new Date(form.value.startDate),
+    endDate: new Date(form.value.endDate),
     teamMembers: selectedTeamMembers.value.map(userId => ({
       userId,
-      role: roles[userId] as "member" | "leader"
+      role: roles.value[userId] as "member" | "leader"
     }))
   };
   try {
     await projectStore.createProject(projectData);
     alert('Project created successfully!');
   } catch (error) {
-   alert('Failed to create project');
+    alert('Failed to create project');
     console.error(error);
   }
 };
