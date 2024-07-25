@@ -35,11 +35,11 @@
       <!-- Dynamic team member assignment with role selection -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Assign Team Members and Roles</label>
-        <div v-for="user in users" :key="user.userId" class="flex items-center space-x-3 mb-2">
+        <div v-for="user in users" :key="user._id" class="flex items-center space-x-3 mb-2">
          <!-- Make sure this is inside the v-for loop -->
-          <input type="checkbox" :value="user.userId" @change="handleCheckboxChange($event, user.userId)">
+          <input type="checkbox" :value="user._id" @change="handleCheckboxChange($event, user._id)">
           <span>{{ user.username }}</span>
-          <select v-model="roles[user.userId]">
+          <select v-model="roles[user._id]">
             <option value="member">Member</option>
             <option value="leader">Leader</option>
           </select>
@@ -81,18 +81,19 @@ const selectedTeamMembers = ref<string[]>([]);
 onMounted(async () => {
   await userStore.fetchAllUsers();
   users.value = userStore.getUsers;
-  users.value.forEach(user => roles.value[user.userId] = 'member'); // Default to 'member'
+  users.value.forEach(user => roles.value[user._id] = 'member'); // Default to 'member'
 });
 
 // Handle checkbox change event
-const handleCheckboxChange = (event: Event, userId: string) => {
+const handleCheckboxChange = (event: Event, _id: string) => {
   const checkbox = event.target as HTMLInputElement;
   if (checkbox.checked) {
-    selectedTeamMembers.value.push(userId);
+    selectedTeamMembers.value.push(_id);
   } else {
-    selectedTeamMembers.value = selectedTeamMembers.value.filter(id => id !== userId);
+    selectedTeamMembers.value = selectedTeamMembers.value.filter(id => id !== _id);
   }
 };
+
 
 
 // Submit form data including dynamic role assignments
@@ -106,6 +107,12 @@ const submitForm = async () => {
       role: roles.value[userId] as "member" | "leader"
     }))
   };
+
+  console.log('Project Data:', projectData); // Log the data to verify structure
+  console.log('Selected Team Members:', selectedTeamMembers.value);
+  console.log('Roles:', roles.value);
+
+
   try {
     await projectStore.createProject(projectData);
     alert('Project created successfully!');
