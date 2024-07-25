@@ -1,4 +1,4 @@
 export interface TeamMember {
-    userId: string;  
+    _id: string;  
     role: 'leader' | 'member';
   }

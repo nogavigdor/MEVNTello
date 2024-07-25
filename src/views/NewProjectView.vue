@@ -102,9 +102,9 @@ const submitForm = async () => {
     ...form.value,
     startDate: new Date(form.value.startDate),
     endDate: new Date(form.value.endDate),
-    teamMembers: selectedTeamMembers.value.map(userId => ({
-      userId,
-      role: roles.value[userId] as "member" | "leader"
+    teamMembers: selectedTeamMembers.value.map(_id => ({
+      _id,
+      role: roles.value[_id] as "member" | "leader"
     }))
   };
 
