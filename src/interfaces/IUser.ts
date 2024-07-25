@@ -1,6 +1,6 @@
 // Interface for the User object.
 export interface User {
-    userId: string;
+    _id: string;
     email: string;
     username: string;
   }
