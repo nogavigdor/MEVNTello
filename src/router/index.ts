@@ -42,10 +42,6 @@ const router = createRouter({
   routes,
 });
 
-//Authentication
-const isAuthenticated = () => {
-  return true;
-}
 
 //Navigation guards
 router.beforeEach((to, from, next) => {

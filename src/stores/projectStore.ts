@@ -89,5 +89,15 @@ export const useProjectStore = defineStore('projects', {
         throw error;
       }
     },
+
+    async getProjectByUserId(userId: string) {
+      try {
+        const response = await apiClient.get(`/projects/user/${userId}`);
+        return response.data;
+      } catch (error: unknown) {
+        console.error('Failed to fetch project:', error);
+        throw error;
+      }
+    }
   },
 });

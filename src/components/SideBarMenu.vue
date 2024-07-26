@@ -13,26 +13,17 @@
   </template>
   
   <script setup lang="ts">
-  import { onMounted, ref, computed } from 'vue';
-  import { useProjectStore } from '@/stores/projectStore';
+  import {  computed } from 'vue';
+
   import { useUserStore } from '@/stores/userStore';
-  import { Project } from '@/interfaces/IProject';
+
   
   const userStore = useUserStore();
-  const projectsStore = useProjectStore();
-  
-  const projects = ref<Project[]>([]);
+
+ 
   
   const isAuthenticated = computed(() => userStore.isAuthenticated);
   
-  onMounted(async () => {
-    if (isAuthenticated.value) {
-      try {
-        projects.value = await projectsStore.fetchProjects();
-      } catch (error) {
-        console.error('Failed to load projects:', error);
-      }
-    }
-  });
+
   </script>
   

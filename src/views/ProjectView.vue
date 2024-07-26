@@ -9,11 +9,12 @@
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import { useProjectStore } from '@/stores/projectStore';
+  import { Project } from '@/interfaces/IProject';
   
   const route = useRoute();
   const projectsStore = useProjectStore();
   
-  const project = ref<{ name: string } | null>(null);
+  const project = ref< Project | null>(null);
   
   onMounted(async () => {
     project.value = await projectsStore.getProjectById(route.params.id.toString());

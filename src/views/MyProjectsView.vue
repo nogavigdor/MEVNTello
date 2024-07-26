@@ -13,14 +13,25 @@
   </template>
   
   <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
+  import { onMounted, ref, computed, watch } from 'vue';
   import { useProjectStore } from '@/stores/projectStore';
+  import { useUserStore } from '@/stores/userStore';
   
   const projectsStore = useProjectStore();
   const projects = ref(projectsStore.projects);
-  
-  onMounted(async () => {
-    projects.value = await projectsStore.fetchProjects();
+
+  const userStore = useUserStore();
+  const userId = computed(() => userStore.user?._id);
+
+ console.log(userId);
+
+  watch(userId, async (newUserId) => {
+    console.log(newUserId);
+    // const id = 
+    if (newUserId) {
+      projects.value = await projectsStore.getProjectByUserId(newUserId);
+    }
   });
+
   </script>
   
