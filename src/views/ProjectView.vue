@@ -1,7 +1,23 @@
 <template>
     <div>
-      <h1>{{ project && project.name }}</h1>
-      <!-- Display lists, tasks, and subtasks -->
+      <h1>{{ project?.name }}</h1>
+      <p>{{ project?.description }}</p>
+      <h2>Tasks:</h2>
+      <ul>
+        <li v-for="task in project?.tasks" :key="task._id">
+          <p>{{ task.name }}</p>
+          <p>{{ task.description }}</p>
+        </li>
+      </ul>
+      <h2>Members:</h2>
+      <ul>
+        <li v-for="member in project?.teamMembers" :key="member._id">
+          <p>Role: {{ member?._id }}</p>
+          <p>Role: {{ member?.role }}</p>
+        </li>
+      </ul>
+
+      
     </div>
   </template>
   
