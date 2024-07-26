@@ -1,16 +1,16 @@
 <template>
-  <nav class="flex items-center justify-between p-4 bg-gray-100 shadow-md">
+  <nav class="flex items-center justify-between p-4 bg-gray-800 text-white shadow-md">
     <div>
-      <router-link to="/" class="text-primary font-bold text-xl">Home</router-link>
+      <router-link to="/" class="text-lightGreen font-bold text-xl">Home</router-link>
     </div>
     <div class="flex items-center space-x-4">
-      <div v-if="!isAuthenticated">
-        <router-link to="/login" class="text-gray-700 hover:text-primary">Login</router-link>
-        <router-link to="/register" class="text-gray-700 hover:text-primary">Register</router-link>
+      <div v-if="!isAuthenticated" class="flex items-center space-x-4">
+        <router-link to="/login" class="text-lightLink hover:text-primary">Login</router-link>
+        <router-link to="/register" class="text-white hover:text-primary">Register</router-link>
       </div>
       <div v-else class="flex items-center space-x-4">
         <WelcomeUser />
-        <button @click="logout" class="text-gray-700 hover:text-primary">Logout</button>
+        <button @click="logout" class="text-lightLink hover:text-primary">Logout</button>
       </div>
     </div>
   </nav>

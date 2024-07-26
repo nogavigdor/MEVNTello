@@ -1,6 +1,5 @@
 <template>
     <div class="flex min-h-screen bg-gray-100">
-      <SideBarMenu />
       <div class="flex-1 p-8">
         <h1 class="text-2xl font-bold text-primary mb-4">Dashboard</h1>
         <div class="space-y-4">

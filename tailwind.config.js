@@ -10,6 +10,7 @@ export default {
       },
       colors: {
         primary: '#4CAF50', // Green
+        lightLink: '#D2FFA5', // Light Green
         secondary: '#FF9800', // Orange
         accent: '#3F51B5', // Indigo
         error: '#F44336', // Red
