@@ -23,13 +23,19 @@
   const userStore = useUserStore();
   const userId = computed(() => userStore.user?._id);
 
- console.log(userId);
+ console.log('the user id is:',userId);
 
   watch(userId, async (newUserId) => {
-    console.log(newUserId);
+    console.log('the new user id:',newUserId);
     // const id = 
     if (newUserId) {
       projects.value = await projectsStore.getProjectByUserId(newUserId);
+    }
+  });
+
+  onMounted(async () => {
+    if (userId.value) {
+      projects.value = await projectsStore.getProjectByUserId(userId.value);
     }
   });
 

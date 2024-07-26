@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+import { useUserStore } from '@/stores/userStore';
 import App from './App.vue';
 import router from './router';
 import { FontAwesomeIcon } from './fontAwesome';  // Import FontAwesome setup
@@ -12,4 +13,10 @@ app.component('font-awesome-icon', FontAwesomeIcon);  // Register FontAwesome co
 
 app.use(pinia);
 app.use(router);
-app.mount('#app');
+
+const userStore = useUserStore();
+
+// Initialize the store before mounting the app
+userStore.initializeStore().then(() => {
+  app.mount('#app');
+});

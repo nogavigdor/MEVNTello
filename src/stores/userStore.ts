@@ -61,6 +61,22 @@ export const useUserStore = defineStore('users', {
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
     },
+    // Action to initialize the store with the user data.
+    async initializeStore() {
+      if (this.token) {
+        try {
+          const response = await apiClient.get('/users/me', {
+            headers: {
+              'auth-token': this.token,
+            },
+          });
+          this.user = response.data;
+        } catch (error) {
+          console.error('Failed to fetch user data:', error);
+          this.logout();
+        }
+      }
+    },
   },
   getters: {
     // Getter to check if the user is authenticated.
