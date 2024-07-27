@@ -37,18 +37,25 @@
 
 import { ref, defineEmits } from 'vue';
 import { useUserStore } from '@/stores/userStore';
+import { useMessageStore } from '@/stores/messageStore';
 import router from '@/router';
 
 const form = ref({ email: '', password: '' });
 const userStore = useUserStore();
+const messageStore = useMessageStore();
 const emit = defineEmits(['loginSuccess']);
 
 const handleLogin = async () => {
   try {
     console.log('Form Data:', form.value);  // Log form data
     await userStore.login(form.value);
-    alert('Login successful');
+    // Emit the loginSuccess event
     emit('loginSuccess');
+      // Set the success message in the store
+    messageStore.setMessage(
+    'You are now logged in.',
+    'success'
+    );
     // Redirect to the dashboard after successful login
     router.push('/dashboard');
   } catch (error) {
