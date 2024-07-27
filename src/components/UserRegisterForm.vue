@@ -46,6 +46,7 @@
           Register
         </button>
       </form>
+      <div v-if="errorMessage" class="text-error">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
@@ -56,6 +57,7 @@ import { useUserStore } from '@/stores/userStore';
 import router from '@/router';
 
 const form = ref({ username: '', email: '', password: '' });
+const errorMessage = ref<string | null>(null);
 const userStore = useUserStore();
 
 const handleRegister = async () => {
@@ -64,8 +66,9 @@ const handleRegister = async () => {
     alert('Registration successful');
     // Redirect to the login page after successful registration
     router.push('/login');
-  } catch (error) {
+  } catch (error: any) {
     alert('Registration failed');
+    errorMessage.value = error.response.data.message;
     console.error(error);
   }
 };
