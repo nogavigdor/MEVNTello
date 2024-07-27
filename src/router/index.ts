@@ -55,7 +55,13 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth) && !userStore.isAuthenticated) {
     // Redirect to login page if not authenticated
     next({ name: 'Login' });
-  } else {
+  }
+  // Redirect to dashboard if already authenticated
+  else if ((to.name === 'Login' || to.name === 'Register') && userStore.isAuthenticated) {
+    // Redirect to dashboard if already authenticated
+    next({ name: 'Dashboard' });
+  }
+  else {
     next(); // make sure to always call next()!
   }
 });
