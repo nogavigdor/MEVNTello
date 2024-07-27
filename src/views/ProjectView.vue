@@ -4,10 +4,7 @@
       <p>{{ project?.description }}</p>
       <h2>Tasks:</h2>
       <ul>
-        <li v-for="task in project?.tasks" :key="task._id">
-          <p>{{ task.name }}</p>
-          <p>{{ task.description }}</p>
-        </li>
+      
       </ul>
       <h2>Members:</h2>
       <ul>
