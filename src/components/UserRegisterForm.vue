@@ -46,7 +46,6 @@
           Register
         </button>
       </form>
-      <div v-if="errorMessage" class="text-error">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
@@ -54,21 +53,35 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/userStore';
+import { useMessageStore } from '@/stores/messageStore';
 import router from '@/router';
 
 const form = ref({ username: '', email: '', password: '' });
-const errorMessage = ref<string | null>(null);
 const userStore = useUserStore();
+const messageStore = useMessageStore();
+const message = messageStore.message;
 
 const handleRegister = async () => {
   try {
     await userStore.register(form.value);
-    alert('Registration successful');
-    // Redirect to the login page after successful registration
-    router.push('/login');
+  
+    // Set the success message in the store
+    messageStore.setMessage(
+    'Registration successful. Please login to continue.',
+    'success'
+    );
+      // a small delay before redirecting
+      setTimeout(() => {
+      // Redirect to the login page after successful registration
+      router.push('/login');
+    }, 2000); // 2 seconds delay
   } catch (error: any) {
-    alert('Registration failed');
-    errorMessage.value = error.response.data.message;
+    // Set the error message in the store
+    // The message will be displayed in the message component
+    messageStore.setMessage(
+      error.response?.data.message || error.message, 
+      'error'
+    );
     console.error(error);
   }
 };
