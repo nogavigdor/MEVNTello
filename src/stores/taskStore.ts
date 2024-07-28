@@ -1,14 +1,15 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { Task } from '@/interfaces/ITask';
+import { Task } from '../interfaces/ITask';
 import axios from 'axios';
 
 export const useTaskStore = defineStore('task', () => {
   const tasks = ref<Task[]>([]);
 
+  //fetch tasks by list id
   const fetchTasks = async (listId: string) => {
     try {
-      const response = await axios.get(`/api/projects/${projectId}/tasks`);
+      const response = await axios.get(`/api/tasks/${listId}`);
       tasks.value = response.data;
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
