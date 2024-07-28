@@ -1,6 +1,6 @@
 
 // List interface
-export interface IList {
+export interface List {
   _id: string;
   name: string;
   projectId: string; // Reference to Proejct ID
