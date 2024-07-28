@@ -16,6 +16,7 @@ export const useTaskStore = defineStore('task', () => {
     }
   };
 
+  //create a new task
   const createTask = async (taskData: Task) => {
     try {
       const response = await axios.post('/api/tasks', taskData);
@@ -25,9 +26,35 @@ export const useTaskStore = defineStore('task', () => {
     }
   };
 
+  //update a task by id
+  const updateTask = async (taskData: Task) => {
+    try {
+      const response = await axios.put(`/api/tasks/${taskData._id}`, taskData);
+      const index = tasks.value.findIndex((t) => t._id === taskData._id);
+      if (index !== -1) {
+        tasks.value[index] = response.data;
+      }
+    } catch (error) {
+      console.error('Failed to update task:', error);
+    }
+  };
+
+  //delete a task by id
+    const deleteTask = async (taskId: string) => {
+        try {
+        await axios.delete(`/api/tasks/${taskId}`);
+        tasks.value = tasks.value.filter((t) => t._id !== taskId);
+        } catch (error) {
+        console.error('Failed to delete task:', error);
+        }
+    };
+
+
   return {
     tasks,
     fetchTasks,
     createTask,
+    updateTask,
+    deleteTask,
   };
 });
