@@ -7,6 +7,7 @@ export interface Project {
   startDate: Date;
   endDate: Date;
   allocatedHours: number;
+  creator: string;  // User ID
   teamMembers: TeamMember[];
   lists?: string[];  // Optional for when creating a new project, it's not needed
   createdAt?: Date;

@@ -68,6 +68,7 @@ const users = ref<User[]>([]);
 const form = ref<Project>({
   name: '',
   description: '',
+  creator: userStore.user?._id as string,
   startDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
   endDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
   allocatedHours: 0,
@@ -100,6 +101,7 @@ const handleCheckboxChange = (event: Event, _id: string) => {
 const submitForm = async () => {
   const projectData: Project = {
     ...form.value,
+    //overides default form values with the form input values
     startDate: new Date(form.value.startDate),
     endDate: new Date(form.value.endDate),
     teamMembers: selectedTeamMembers.value.map(_id => ({

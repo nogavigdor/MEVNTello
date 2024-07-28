@@ -13,6 +13,7 @@
           <p>Role: {{ member?.role }}</p>
         </li>
       </ul>
+      <h2> Creator: {{ project?.creator }}</h2>
 
       
     </div>
