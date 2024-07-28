@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import apiClient from '../services/apiClient';
+import router from '../router';
 import { User } from '../interfaces/IUser';
 import { UsersState } from '../interfaces/IUserState';
 import { LoginCredentials } from '../interfaces/ILoginCredentials';
@@ -60,6 +61,7 @@ export const useUserStore = defineStore('users', {
       // Remove user data and token from localStorage.
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
+      router.push({ name: 'Home' }); // Redirect to the Home view after logout
     },
     // Action to initialize the store with the user data.
     async initializeStore() {
