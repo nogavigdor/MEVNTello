@@ -107,7 +107,9 @@ const submitForm = async () => {
     teamMembers: selectedTeamMembers.value.map(_id => ({
       _id,
       role: roles.value[_id] as "member" | "leader"
-    }))
+    })),
+    lists: []
+
   };
 
   console.log('Project Data:', projectData); // Log the data to verify structure
