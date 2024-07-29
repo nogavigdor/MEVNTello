@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import apiClient from '../services/apiClient';
 import { ref } from 'vue';
 import { List } from '@/interfaces/IList';
 import axios from 'axios';
@@ -18,7 +19,7 @@ export const useListStore = defineStore('list', () => {
     
     const createList = async (listData: List) => {
         try {
-        const response = await axios.post('/api/lists', listData);
+        const response = await apiClient.post('/lists', listData);
         lists.value.push(response.data);
         } catch (error) {
         console.error('Failed to create list:', error);
@@ -27,7 +28,7 @@ export const useListStore = defineStore('list', () => {
 
    const updateList = async (listData: List) => {
         try {
-        const response = await axios.put(`/api/lists/${listData._id}`, listData);
+        const response = await apiClient.put(`/lists/${listData._id}`, listData);
         const index = lists.value.findIndex((l) => l._id === listData._id);
         if (index !== -1) {
             lists.value[index] = response.data;
@@ -39,7 +40,7 @@ export const useListStore = defineStore('list', () => {
 
     const deleteList = async (listId: string) => {
         try {
-        await axios.delete(`/api/lists/${listId}`);
+        await apiClient.delete(`/lists/${listId}`);
         lists.value = lists.value.filter((l) => l._id !== listId);
         } catch (error) {
         console.error('Failed to delete list:', error);
