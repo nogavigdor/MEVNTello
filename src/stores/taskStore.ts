@@ -27,10 +27,10 @@ export const useTaskStore = defineStore('task', () => {
   };
 
   //update a task by id
-  const updateTask = async (taskData: Task) => {
+  const updateTask = async (taskId: string, updatedData: Partial<Task>) => {
     try {
-      const response = await axios.put(`/api/tasks/${taskData._id}`, taskData);
-      const index = tasks.value.findIndex((t) => t._id === taskData._id);
+      const response = await axios.put(`/api/tasks/${taskId}`, updatedData);
+      const index = tasks.value.findIndex((t) => t._id === taskId);
       if (index !== -1) {
         tasks.value[index] = response.data;
       }
