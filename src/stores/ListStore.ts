@@ -21,6 +21,7 @@ export const useListStore = defineStore('list', () => {
         try {
         const response = await apiClient.post('/lists', listData);
         lists.value.push(response.data);
+        return response.data;
         } catch (error) {
         console.error('Failed to create list:', error);
         }
