@@ -7,16 +7,17 @@ import axios from 'axios';
 export const useListStore = defineStore('list', () => {
     const lists = ref<List[]>([]);
     
-    //fetch lists by project id
+    //fetch lists by project id, set the lists array to the response data and return the lists array
     const fetchLists = async (projectId: string) => {
         try {
         const response = await axios.get(`/lists/project/${projectId}`);
         lists.value = response.data;
+        return lists.value;
         } catch (error) {
         console.error('Failed to fetch lists:', error);
         }
     };
-    
+    //create a new list and, add it to the lists array and return the new list
     const createList = async (listData: NewList) => {
         try {
         const response = await apiClient.post('/lists', listData);
@@ -27,6 +28,7 @@ export const useListStore = defineStore('list', () => {
         }
     };
 
+    //update a list by id, find the index of the list in the lists array and update the list at that index with the response data
    const updateList = async (listData: List) => {
         try {
         const response = await apiClient.put(`/lists/${listData._id}`, listData);
@@ -34,11 +36,13 @@ export const useListStore = defineStore('list', () => {
         if (index !== -1) {
             lists.value[index] = response.data;
         }
+        return response.data;
         } catch (error) {
         console.error('Failed to update list:', error);
         }
     };
 
+    //delete a list by id, filter the lists array to remove the list with the id
     const deleteList = async (listId: string) => {
         try {
         await apiClient.delete(`/lists/${listId}`);

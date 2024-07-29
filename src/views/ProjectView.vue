@@ -84,9 +84,12 @@ onMounted(async () => {
     const projectId = route.params.id.toString();
     project.value = await projectsStore.getProjectById(projectId);
 
+    console.log('the project is:',project.value);
+    console.log('the project lists are:',project.value?.lists);
     if (project.value?.lists && project.value.lists.length > 0) {
       // Fetch lists by project ID
-      await listsStore.fetchLists(projectId);
+      lists.value = await listsStore.fetchLists(projectId);
+      console.log('and now the lists are:',listsStore.lists);
       lists.value = listsStore.lists;
 
       // Fetch tasks for each list
@@ -142,7 +145,7 @@ const addList = async () => {
   };
   await listsStore.createList(newList);
   lists.value = listsStore.lists;
-  showAddListModal.value = false;
+  //showAddListModal.value = false;
   newListName.value = '';
 };
 </script>
