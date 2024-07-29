@@ -17,6 +17,12 @@ export const useTaskStore = defineStore('task', () => {
     }
   };
 
+  //get a task by id
+    const getTaskById = (taskId: string) => {
+        //find the task in the tasks array and return it (a Task object or undefined)
+        return tasks.value.find((t) => t._id === taskId);
+    };
+
   //create a new task
   const createTask = async (taskData: Task) => {
     try {
@@ -54,6 +60,7 @@ export const useTaskStore = defineStore('task', () => {
   return {
     tasks,
     fetchTasks,
+    getTaskById,
     createTask,
     updateTask,
     deleteTask,

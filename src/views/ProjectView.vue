@@ -92,12 +92,11 @@ onMounted(async () => {
       console.log('and now the lists are:',listsStore.lists);
       lists.value = listsStore.lists;
 
-      // Fetch tasks for each list
-      await Promise.all(lists.value.map(async (list: List) => {
-        const tasksForList = await tasksStore.fetchTasks(list._id);
+        // Fetch tasks for each list by their IDs
+        await Promise.all(lists.value.map(async (list: List) => {
+        const tasksForList = await Promise.all(list.tasks.map(taskId => tasksStore.getTaskById(taskId)));
+        // Assign tasks to the list
         tasks.value[list._id] = tasksForList;
-        // Update list's tasks to be the actual task objects
-        list.tasks = tasksForList;
       }));
     }
   } catch (error) {
