@@ -63,7 +63,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useListStore } from '@/stores/listStore';
 import { useTaskStore } from '@/stores/taskStore';
 import { Project } from '@/interfaces/IProject';
-import { List } from '@/interfaces/IList';
+import { List, NewList } from '@/interfaces/IList';
 import { Task } from '@/interfaces/ITask';
 import { useUserStore } from '@/stores/userStore';
 
@@ -135,8 +135,7 @@ const updateHoursUsed = async (task: Task) => {
 
 const addList = async () => {
   if (newListName.value.trim() === '') return;
-  const newList: List = {
-    _id: '',
+  const newList: NewList = {
     name: newListName.value,
     projectId: project.value?._id || '',
     tasks: [],

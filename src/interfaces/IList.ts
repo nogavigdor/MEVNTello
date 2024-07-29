@@ -9,5 +9,6 @@ export interface List {
   updatedAt?: Date;
 }
 
+export type NewList = Omit<List, "_id">;
 
 

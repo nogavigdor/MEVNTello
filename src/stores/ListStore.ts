@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import apiClient from '../services/apiClient';
 import { ref } from 'vue';
-import { List } from '@/interfaces/IList';
+import { List, NewList } from '@/interfaces/IList';
 import axios from 'axios';
 
 export const useListStore = defineStore('list', () => {
@@ -17,7 +17,7 @@ export const useListStore = defineStore('list', () => {
         }
     };
     
-    const createList = async (listData: List) => {
+    const createList = async (listData: NewList) => {
         try {
         const response = await apiClient.post('/lists', listData);
         lists.value.push(response.data);
