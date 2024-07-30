@@ -21,7 +21,7 @@ export const useProjectStore = defineStore('projects', {
       }
     },
     // Fetch all projects by user ID
-    async getProjectByUserId(userId: string) {
+    async fetchProjectByUserId(userId: string) {
       try {
         const response = await apiClient.get(`/projects/user/${userId}`);
         this.projects = response.data;
@@ -92,7 +92,7 @@ export const useProjectStore = defineStore('projects', {
       }
     },
     // Fetch a single project by ID
-    async getProjectById(projectId: string) {
+    async fetchProjectById(projectId: string) {
       try {
         const response = await apiClient.get(`/projects/${projectId}`);
         return response.data;
@@ -102,5 +102,22 @@ export const useProjectStore = defineStore('projects', {
       }
     },
     
+  },
+  getters: {
+    // Get a project by ID
+    getProjectById: (state) => (projectId: string) => {
+      // Find the project in the projects array and return it (a Project object or undefined)
+      return state.projects.find((p) => p._id === projectId);
+    },
+    //Get the member role - leader or member - in a project
+    getMemberRole: (state) => (projectId: string, memberId: string) => {
+      // Find the project in the projects array
+      const project = state.projects.find((p) => p._id === projectId);
+      if (!project) return null;
+      // Find the team member in the project's teamMembers array 
+      const teamMember = project.teamMembers.find((m) => m._id === memberId);
+      // Return the role of the team member
+      return teamMember ? teamMember.role : null;
+    }
   },
 });

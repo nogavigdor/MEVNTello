@@ -82,7 +82,7 @@ const newListName = ref('');
 onMounted(async () => {
   try {
     const projectId = route.params.id.toString();
-    project.value = await projectsStore.getProjectById(projectId);
+    project.value = await projectsStore.fetchProjectById(projectId);
 
     console.log('the project is:',project.value);
     console.log('the project lists are:',project.value?.lists);
