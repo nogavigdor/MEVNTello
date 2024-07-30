@@ -29,13 +29,13 @@
     console.log('the new user id:',newUserId);
     // const id = 
     if (newUserId) {
-      projects.value = await projectsStore.getProjectByUserId(newUserId);
+      projects.value = await projectsStore.fetchProjectByUserId(newUserId);
     }
   });
 
   onMounted(async () => {
     if (userId.value) {
-      projects.value = await projectsStore.getProjectByUserId(userId.value);
+      projects.value = await projectsStore.fetchProjectByUserId(userId.value);
     }
   });
 
