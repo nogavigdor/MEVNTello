@@ -1,26 +1,29 @@
 <template>
   <form @submit.prevent="handleLogin">
     <div class="mb-4 relative">
-      <label class="block text-gray-700 mb-1">Email</label>
+  
+      <label for="email" class="block text-gray-700 mb-1">Email</label>
       <div class="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-primary">
         <font-awesome-icon icon="envelope" class="w-5 h-5 text-primary mx-3" />
         <input
           v-model="form.email"
           type="email"
+          id="email"
           class="w-full p-3 pl-10 pr-3 focus:outline-none rounded-lg"
-          required
+          required autocomplete = "email"
         />
       </div>
     </div>
     <div class="mb-4 relative">
-      <label class="block text-gray-700 mb-1">Password</label>
+      <label for="password" class="block text-gray-700 mb-1">Password</label>
       <div class="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-primary">
         <font-awesome-icon icon="lock" class="w-5 h-5 text-primary mx-3" />
         <input
           v-model="form.password"
-          type="password"
+          type="password" 
+          id="password"
           class="w-full p-3 pl-10 pr-3 focus:outline-none rounded-lg"
-          required
+          required autocomplete = "current-password"
         />
       </div>
     </div>
