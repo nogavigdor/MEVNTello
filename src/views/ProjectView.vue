@@ -2,8 +2,8 @@
   <div class="p-6">
     <h1 class="text-3xl font-bold mb-4">{{ project?.name }}</h1>
     <p class="mb-6">{{ project?.description }}</p>
-    <div class="flex space-x-4 overflow-x-auto" v-if="lists.length > 0">
-      <div class="bg-gray-100 rounded-lg p-4 w-80" v-for="list in lists" :key="list._id">
+    <div class="flex space-x-4 overflow-x-auto" v-if="listsStore.lists.length > 0">
+      <div class="bg-gray-100 rounded-lg p-4 w-80" v-for="list in listsStore.lists" :key="list._id">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold">{{ list.name }}</h2>
           <div v-if="isLeader" class="space-x-2">
@@ -39,10 +39,10 @@
     </div>
     <div v-else>
       <p>No lists available for this project.</p>
-      <div v-if="isLeader">
+    </div>
+    <div v-if="isLeader">
         <button class="bg-green-500 text-white p-2 rounded" @click="showAddListModal = true">Add List</button>
       </div>
-    </div>
     <div v-if="showAddListModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
       <div class="bg-white p-6 rounded shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Add New List</h2>
@@ -74,7 +74,7 @@ const tasksStore = useTaskStore();
 const userStore = useUserStore();
 
 const project = ref<Project | null>(null);
-const lists = ref<List[]>([]);
+// const lists = ref<List[]>([]);
 const tasks = ref<{ [key: string]: Task[] }>({});
 const showAddListModal = ref(false);
 const newListName = ref('');
@@ -88,16 +88,16 @@ onMounted(async () => {
     console.log('the project lists are:',project.value?.lists);
     if (project.value?.lists && project.value.lists.length > 0) {
       // Fetch lists by project ID
-      lists.value = await listsStore.fetchLists(projectId);
+      await listsStore.fetchLists(projectId);
       console.log('and now the lists are:',listsStore.lists);
-      lists.value = listsStore.lists;
+      // lists.value = listsStore.lists;
 
         // Fetch tasks for each list by their IDs
-        await Promise.all(lists.value.map(async (list: List) => {
-        const tasksForList = await Promise.all(list.tasks.map(taskId => tasksStore.getTaskById(taskId)));
+        // await Promise.all(lists.value.map(async (list: List) => {
+        // const tasksForList = await Promise.all(list.tasks.map(taskId => tasksStore.getTaskById(taskId)));
         // Assign tasks to the list
-        tasks.value[list._id] = tasksForList;
-      }));
+        // tasks.value[list._id] = tasksForList;
+      //}));
     }
   } catch (error) {
     console.error('Failed to fetch project:', error);
@@ -143,8 +143,7 @@ const addList = async () => {
     tasks: [],
   };
   await listsStore.createList(newList);
-  lists.value = listsStore.lists;
-  //showAddListModal.value = false;
+  showAddListModal.value = false;
   newListName.value = '';
 };
 </script>

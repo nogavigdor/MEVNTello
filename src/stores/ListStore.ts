@@ -10,7 +10,7 @@ export const useListStore = defineStore('list', () => {
     //fetch lists by project id, set the lists array to the response data and return the lists array
     const fetchLists = async (projectId: string) => {
         try {
-        const response = await axios.get(`/lists/project/${projectId}`);
+        const response = await apiClient.get(`/lists/project/${projectId}`);
         lists.value = response.data;
         return lists.value;
         } catch (error) {
