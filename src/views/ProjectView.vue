@@ -1,6 +1,7 @@
 <template>
   <div class="p-6">
     <h1 class="text-3xl font-bold mb-4">{{ project?.name }}</h1>
+    <p>You have a <span class="text-darkOrange"> {{ isLeader? 'leader' : 'member'}}</span> role in this project</p>
     <p class="mb-6">{{ project?.description }}</p>
     <div class="flex space-x-4 overflow-x-auto" v-if="listsStore.lists.length > 0">
       <div class="bg-gray-100 rounded-lg p-4 w-80" v-for="list in listsStore.lists" :key="list._id">
@@ -85,10 +86,10 @@ const fetchProjectDetails = async (projectId: string) => {
   if (project.value?.lists && project.value.lists.length > 0) {
     await listsStore.fetchLists(projectId);
 
-    await Promise.all(listsStore.lists.map(async (list: List) => {
-      //const tasksForList = await Promise.all(list.tasks.map(taskId => tasksStore.getTaskById(taskId)));
-      //tasks.value[list._id] = tasksForList;
-    }));
+   // await Promise.all(listsStore.lists.map(async (list: List) => {
+   //   const tasksForList = await Promise.all(list.tasks.map(taskId => tasksStore.getTaskById(taskId)));
+   //   tasks.value[list._id] = tasksForList;
+   // }));
   }
 };
 
