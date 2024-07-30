@@ -1,8 +1,8 @@
 <template>
   <div class="p-6">
     <h1 class="text-3xl font-bold mb-4">{{ project?.name }}</h1>
-    <p>You have a <span class="text-darkOrange"> {{ isLeader? 'leader' : 'member'}}</span> role in this project</p>
     <p class="mb-6">{{ project?.description }}</p>
+    <p>You have a <span>{{ isLeader ? 'leader' : 'member' }}</span> role in this project</p>
     <div class="flex space-x-4 overflow-x-auto" v-if="listsStore.lists.length > 0">
       <div class="bg-gray-100 rounded-lg p-4 w-80" v-for="list in listsStore.lists" :key="list._id">
         <div class="flex justify-between items-center mb-4">
@@ -12,8 +12,8 @@
             <button class="text-red-500 hover:text-red-700" @click="deleteList(list._id)">🗑️</button>
           </div>
         </div>
-        <div class="space-y-4" v-if="list.tasks && list.tasks.length > 0">
-          <div class="bg-white rounded-lg p-4 shadow-md" v-for="task in list.tasks" :key="task._id">
+        <div class="space-y-4" v-if="tasksStore.tasksByListId[list._id] && tasksStore.tasksByListId[list._id].length > 0">
+          <div class="bg-white rounded-lg p-4 shadow-md" v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id">
             <div class="flex justify-between items-center mb-2">
               <h3 class="text-lg font-medium">{{ task.name }}</h3>
               <div v-if="isLeader || isTaskMember(task)" class="space-x-2">
@@ -42,8 +42,8 @@
       <p>No lists available for this project.</p>
     </div>
     <div v-if="isLeader">
-        <button class="bg-green-500 text-white p-2 rounded" @click="showAddListModal = true">Add List</button>
-      </div>
+      <button class="bg-green-500 text-white p-2 rounded" @click="showAddListModal = true">Add List</button>
+    </div>
     <div v-if="showAddListModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
       <div class="bg-white p-6 rounded shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Add New List</h2>
@@ -65,7 +65,8 @@ import { useListStore } from '@/stores/listStore';
 import { useTaskStore } from '@/stores/taskStore';
 import { Project } from '@/interfaces/IProject';
 import { List, NewList } from '@/interfaces/IList';
-import { Task } from '@/interfaces/ITask';
+import { Task, NewTask } from '@/interfaces/ITask';
+import { TeamMember } from '@/interfaces/ITeamMember';
 import { useUserStore } from '@/stores/userStore';
 
 const route = useRoute();
@@ -75,10 +76,15 @@ const tasksStore = useTaskStore();
 const userStore = useUserStore();
 
 const project = ref<Project | null>(null);
-// const lists = ref<List[]>([]);
-const tasks = ref<{ [key: string]: Task[] }>({});
 const showAddListModal = ref(false);
+const showAddTaskModal = ref(false);
 const newListName = ref('');
+const newTask = ref<NewTask>({
+  name: '',
+  hoursAllocated: 0,
+  hoursUsed: 0,
+  assignedMembers: [],
+});
 
 const fetchProjectDetails = async (projectId: string) => {
   project.value = await projectsStore.fetchProjectById(projectId);
@@ -86,10 +92,10 @@ const fetchProjectDetails = async (projectId: string) => {
   if (project.value?.lists && project.value.lists.length > 0) {
     await listsStore.fetchLists(projectId);
 
-   // await Promise.all(listsStore.lists.map(async (list: List) => {
-   //   const tasksForList = await Promise.all(list.tasks.map(taskId => tasksStore.getTaskById(taskId)));
-   //   tasks.value[list._id] = tasksForList;
-   // }));
+    // Fetch tasks for each list
+    await Promise.all(listsStore.lists.map(async (list: List) => {
+      await tasksStore.fetchTasks(list._id);
+    }));
   }
 };
 
@@ -101,7 +107,7 @@ onMounted(async () => {
 onUnmounted(() => {
   project.value = null;
   listsStore.lists = [];
-  tasks.value = {};
+  tasksStore.tasksByListId = {};
 });
 
 const isLeader = computed(() => {
@@ -119,6 +125,11 @@ const editList = (listId: string) => {
 const deleteList = async (listId: string) => {
   await listsStore.deleteList(listId);
   project.value = await projectsStore.fetchProjectById(route.params.id.toString());
+};
+
+const addTask = async () => {
+  const listId = 'listId'; // Replace with the actual list ID
+  await tasksStore.createTask(listId, newTask.value);
 };
 
 const editTask = (taskId: string) => {

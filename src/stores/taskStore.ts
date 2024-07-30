@@ -1,33 +1,47 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { Task } from '../interfaces/ITask';
+import { Task, NewTask } from '../interfaces/ITask';
 import apiClient from '../services/apiClient';
 import axios from 'axios';
 
 export const useTaskStore = defineStore('task', () => {
-  const tasks = ref<Task[]>([]);
+  
+  //two dimensional array of lists (id's) and their tasks (Task objects)
+  const tasksByListId = ref<{ [key: string]: Task[] }>({});
+
+
+
 
   //fetch tasks by list id
   const fetchTasks = async (listId: string) => {
     try {
-      const response = await apiClient.get(`/tasks/${listId}`);
-      tasks.value = response.data;
+      const response = await apiClient.get(`/tasks/list/${listId}`);
+      tasksByListId.value[listId] = response.data;
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
     }
   };
 
-  //get a task by id
+  //get a task by task's id
     const getTaskById = (taskId: string) => {
-        //find the task in the tasks array and return it (a Task object or undefined)
-        return tasks.value.find((t) => t._id === taskId);
+      for (const listId in tasksByListId.value) {
+        const task = tasksByListId.value[listId].find(t => t._id === taskId);
+        if (task) {
+          return task;
+        }
+      }
+      return null;
     };
 
   //create a new task
-  const createTask = async (taskData: Task) => {
+  const createTask = async (listId: string, taskData: NewTask) => {
     try {
-      const response = await apiClient.post('/tasks', taskData);
-      tasks.value.push(response.data);
+      const response = await apiClient.post(`/tasks/${listId}`, taskData);
+      const task = response.data;
+      if (!tasksByListId.value[task.listId]) {
+        tasksByListId.value[task.listId] = [];
+      }
+      tasksByListId.value[task.listId].push(task);
     } catch (error) {
       console.error('Failed to create task:', error);
     }
@@ -37,28 +51,34 @@ export const useTaskStore = defineStore('task', () => {
   const updateTask = async (taskId: string, updatedData: Partial<Task>) => {
     try {
       const response = await apiClient.put(`/tasks/${taskId}`, updatedData);
-      const index = tasks.value.findIndex((t) => t._id === taskId);
-      if (index !== -1) {
-        tasks.value[index] = response.data;
+      const updatedTask = response.data;
+      for (const listId in tasksByListId.value) {
+        const index = tasksByListId.value[listId].findIndex(t => t._id === taskId);
+        if (index !== -1) {
+          tasksByListId.value[listId][index] = updatedTask;
+        }
       }
     } catch (error) {
       console.error('Failed to update task:', error);
     }
   };
 
+ 
   //delete a task by id
     const deleteTask = async (taskId: string) => {
-        try {
+      try {
         await apiClient.delete(`/tasks/${taskId}`);
-        tasks.value = tasks.value.filter((t) => t._id !== taskId);
-        } catch (error) {
-        console.error('Failed to delete task:', error);
+        for (const listId in tasksByListId.value) {
+          tasksByListId.value[listId] = tasksByListId.value[listId].filter(t => t._id !== taskId);
         }
+      } catch (error) {
+        console.error('Failed to delete task:', error);
+      }
     };
 
 
   return {
-    tasks,
+    tasksByListId,
     fetchTasks,
     getTaskById,
     createTask,
