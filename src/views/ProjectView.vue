@@ -118,7 +118,7 @@ const editList = (listId: string) => {
 
 const deleteList = async (listId: string) => {
   await listsStore.deleteList(listId);
-  project.value = await projectsStore.getProjectById(route.params.id.toString());
+  project.value = await projectsStore.fetchProjectById(route.params.id.toString());
 };
 
 const editTask = (taskId: string) => {
@@ -127,12 +127,12 @@ const editTask = (taskId: string) => {
 
 const deleteTask = async (taskId: string) => {
   await tasksStore.deleteTask(taskId);
-  project.value = await projectsStore.getProjectById(route.params.id.toString());
+  project.value = await projectsStore.fetchProjectById(route.params.id.toString());
 };
 
 const updateHoursUsed = async (task: Task) => {
   await tasksStore.updateTask(task._id, { hoursUsed: task.hoursUsed });
-  project.value = await projectsStore.getProjectById(route.params.id.toString());
+  project.value = await projectsStore.fetchProjectById(route.params.id.toString());
 };
 
 const addList = async () => {

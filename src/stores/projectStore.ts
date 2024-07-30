@@ -110,7 +110,7 @@ export const useProjectStore = defineStore('projects', {
       return state.projects.find((p) => p._id === projectId);
     },
     //Get the member role - leader or member - in a project
-    getMemberRole: (state) => (projectId: string, memberId: string) => {
+    getTeamMemberRole: (state) => (projectId: string, memberId: string) => {
       // Find the project in the projects array
       const project = state.projects.find((p) => p._id === projectId);
       if (!project) return null;
