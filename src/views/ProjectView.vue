@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useProjectStore } from '@/stores/projectStore';
 import { useListStore } from '@/stores/listStore';
@@ -79,29 +79,28 @@ const tasks = ref<{ [key: string]: Task[] }>({});
 const showAddListModal = ref(false);
 const newListName = ref('');
 
-onMounted(async () => {
-  try {
-    const projectId = route.params.id.toString();
-    project.value = await projectsStore.fetchProjectById(projectId);
+const fetchProjectDetails = async (projectId: string) => {
+  project.value = await projectsStore.fetchProjectById(projectId);
 
-    console.log('the project is:',project.value);
-    console.log('the project lists are:',project.value?.lists);
-    if (project.value?.lists && project.value.lists.length > 0) {
-      // Fetch lists by project ID
-      await listsStore.fetchLists(projectId);
-      console.log('and now the lists are:',listsStore.lists);
-      // lists.value = listsStore.lists;
+  if (project.value?.lists && project.value.lists.length > 0) {
+    await listsStore.fetchLists(projectId);
 
-        // Fetch tasks for each list by their IDs
-        // await Promise.all(lists.value.map(async (list: List) => {
-        // const tasksForList = await Promise.all(list.tasks.map(taskId => tasksStore.getTaskById(taskId)));
-        // Assign tasks to the list
-        // tasks.value[list._id] = tasksForList;
-      //}));
-    }
-  } catch (error) {
-    console.error('Failed to fetch project:', error);
+    await Promise.all(listsStore.lists.map(async (list: List) => {
+      //const tasksForList = await Promise.all(list.tasks.map(taskId => tasksStore.getTaskById(taskId)));
+      //tasks.value[list._id] = tasksForList;
+    }));
   }
+};
+
+onMounted(async () => {
+  const projectId = route.params.id.toString();
+  await fetchProjectDetails(projectId);
+});
+
+onUnmounted(() => {
+  project.value = null;
+  listsStore.lists = [];
+  tasks.value = {};
 });
 
 const isLeader = computed(() => {
