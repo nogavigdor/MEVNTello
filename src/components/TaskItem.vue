@@ -14,6 +14,16 @@
         </span>
         <span v-else>{{ task.hoursUsed }}</span>
       </p>
+      <p class="mb-2">Status:
+      <span v-if="isLeader || isTaskMember(task)">
+        <select v-model="task.status" class="border rounded px-2 py-1 w-full" @change="updateTaskStatus(task)">
+          <option value="todo">To Do</option>
+          <option value="inProgress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
+      </span>
+      <span v-else>{{ task.status }}</span>
+    </p>
       <div class="flex flex-wrap space-x-2">
         <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700" v-for="member in task.assignedMembers" :key="member._id">{{ member._id }}</span>
       </div>
@@ -55,6 +65,12 @@
   const updateHoursUsed = async (task: Task) => {
     await tasksStore.updateTask(task._id, { hoursUsed: task.hoursUsed });
   };
+
+  const updateTaskStatus = async (task: Task) => {
+  await tasksStore.updateTask(task._id, { status: task.status });
+};
+
+  
   </script>
   
   <style scoped>

@@ -12,7 +12,7 @@ export const useUserStore = defineStore('users', {
   state: (): UsersState => ({
       user: null, // Initially, no user is logged in.
       token: localStorage.getItem('authToken') || null, // Get the auth token from localStorage or default to null.
-      users: []
+      users: [] as User[], // Initially, the users array is empty.
     }),
   actions: {
     // Action to fetch all users.

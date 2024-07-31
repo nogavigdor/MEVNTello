@@ -59,6 +59,7 @@ const fetchProjectDetails = async (projectId: string) => {
 
 onMounted(async () => {
   const projectId = route.params.id.toString();
+  await userStore.fetchAllUsers(); 
   await fetchProjectDetails(projectId);
 });
 
