@@ -11,7 +11,7 @@
       <button v-if="isLeader" class="bg-green-500 text-white p-2 rounded mt-4" @click="showAddTaskModal = true">Add Task</button>
       <div v-if="showAddTaskModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
         <div class="bg-white p-6 rounded shadow-lg w-96">
-          <h2 class="text-xl font-bold mb-4">Add New Task</h2>
+          <h2 class="text-xl font-bold mb-4" v-if="isLeader">Add New Task</h2>
           <input v-model="newTask.name" class="border rounded w-full p-2 mb-4" placeholder="Task Name" />
           <input v-model="newTask.description" class="border rounded w-full p-2 mb-4" placeholder="Task Description" />
           <input v-model="newTask.hoursAllocated" type="number" class="border rounded w-full p-2 mb-4" placeholder="Hours Allocated" />

@@ -10,7 +10,7 @@
       <p class="mb-2">Allocated Hours: {{ task.hoursAllocated }}</p>
       <p class="mb-2">Used Hours: 
         <span v-if="isLeader || isTaskMember(task)">
-          <input type="number" v-model="task.hoursUsed" class="border rounded px-2 py-1 w-full" @change="updateHoursUsed(task)" />
+          <input type="number" v-model="inputHoursUsed" class="border rounded px-2 py-1 w-full" @input="onInputChange" />
         </span>
         <span v-else>{{ task.hoursUsed }}</span>
       </p>
@@ -24,6 +24,10 @@
       </span>
       <span v-else>{{ task.status }}</span>
     </p>
+    <div class="mb-2">
+      <label for="progress">Progress: {{ progress }}%</label>
+      <progress id="progress" :value="progress" max="100" class="w-full"></progress>
+    </div>
       <div class="flex flex-wrap space-x-2">
         <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700" v-for="member in task.assignedMembers" :key="member._id">{{ member._id }}</span>
       </div>
@@ -32,17 +36,22 @@
   
   <script setup lang="ts">
   import { computed, defineProps } from 'vue';
+  import { ref } from 'vue';
   import { useTaskStore } from '@/stores/taskStore';
   import { useUserStore } from '@/stores/userStore';
   import { Task } from '@/interfaces/ITask';
   import { Project } from '@/interfaces/IProject';
   import { useProjectStore } from '@/stores/projectStore';
+  //handles the debouncing of the input field
+  import { debounce} from 'lodash';
   
   const props = defineProps<{ task: Task, projectId: string }>();
   
   const tasksStore = useTaskStore();
   const userStore = useUserStore();
   const projectStore = useProjectStore();
+
+  const inputHoursUsed = ref(props.task.hoursUsed);
   
   const project = computed<Project | undefined>(() => projectStore.getProjectById(props.projectId));
   const isLeader = computed(() => {
@@ -70,7 +79,21 @@
   await tasksStore.updateTask(task._id, { status: task.status });
 };
 
-  
+const debouncedUpdateHoursUsed = debounce(async (task: Task) => {
+  if (task.hoursUsed > task.hoursAllocated) {
+    alert('Used hours exceed allocated hours!');
+  }
+  await tasksStore.updateTask(task._id, { hoursUsed: task.hoursUsed });
+}, 300); 
+
+const onInputChange = () => {
+  props.task.hoursUsed = inputHoursUsed.value;
+  debouncedUpdateHoursUsed(props.task);
+};
+
+const progress = computed(() => {
+  return Math.min((props.task.hoursUsed / props.task.hoursAllocated) * 100, 100);
+});
   </script>
   
   <style scoped>
