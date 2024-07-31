@@ -3,15 +3,19 @@
     <h1 class="text-3xl font-bold mb-4">{{ project?.name }}</h1>
     <p class="mb-6">{{ project?.description }}</p>
     <p>You have a <span>{{ isLeader ? 'leader' : 'member' }}</span> role in this project</p>
-    <div class="flex space-x-4 overflow-x-auto" v-if="listsStore.lists.length > 0">
-      <ListItem v-for="list in listsStore.lists" :key="list._id" :list="list" :projectId="project?._id ?? ''" />
+    
+    <div class="flex justify-end mb-4">
+      <button @click="togglePresentation" class="bg-blue-500 text-white p-2 rounded">
+        Switch to {{ presentation === 'kanban' ? 'Trello' : 'Kanban' }} View
+      </button>
     </div>
-    <div v-else>
-      <p>No lists available for this project.</p>
-    </div>
+
+    <ProjectItem :projectId="project?._id ?? ''" :presentation="presentation" :isLeader="isLeader" />
+    
     <div v-if="isLeader">
       <button class="bg-green-500 text-white p-2 rounded" @click="showAddListModal = true">Add List</button>
     </div>
+    
     <div v-if="showAddListModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
       <div class="bg-white p-6 rounded shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Add New List</h2>
@@ -32,11 +36,9 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useListStore } from '@/stores/listStore';
 import { useTaskStore } from '@/stores/taskStore';
 import { Project } from '@/interfaces/IProject';
-import { List, NewList } from '@/interfaces/IList';
-import { Task, NewTask } from '@/interfaces/ITask';
-import { TeamMember } from '@/interfaces/ITeamMember';
+import ProjectItem from '@/components/ProjectItem.vue'; // Adjust the path accordingly
 import { useUserStore } from '@/stores/userStore';
-import ListItem from '@/components/ListItem.vue'; // Adjust the path accordingly
+import { NewList } from '@/interfaces/IList';
 
 const route = useRoute();
 const projectsStore = useProjectStore();
@@ -47,6 +49,7 @@ const userStore = useUserStore();
 const project = ref<Project | null>(null);
 const showAddListModal = ref(false);
 const newListName = ref('');
+const presentation = ref<'kanban' | 'trello'>('trello'); // Default view is 'trello'
 
 const fetchProjectDetails = async (projectId: string) => {
   project.value = await projectsStore.fetchProjectById(projectId);
@@ -84,8 +87,12 @@ const addList = async () => {
   showAddListModal.value = false;
   newListName.value = '';
 };
+
+const togglePresentation = () => {
+  presentation.value = presentation.value === 'kanban' ? 'trello' : 'kanban';
+};
 </script>
 
 <style scoped>
-
+/* Add your styles here */
 </style>

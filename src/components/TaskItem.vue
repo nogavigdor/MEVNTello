@@ -14,16 +14,21 @@
         </span>
         <span v-else>{{ task.hoursUsed }}</span>
       </p>
-      <p class="mb-2">Status:
-      <span v-if="isLeader || isTaskMember(task)">
-        <select v-model="task.status" class="border rounded px-2 py-1 w-full" @change="updateTaskStatus(task)">
-          <option value="todo">To Do</option>
-          <option value="inProgress">In Progress</option>
-          <option value="done">Done</option>
-        </select>
-      </span>
-      <span v-else>{{ task.status }}</span>
-    </p>
+      <p class="mb-2">Status:</p>
+        <div class="flex mb-2">
+          <label class="inline-flex items-center mr-4">
+            <input type="radio" v-model="task.status" value="todo" class="form-radio" @change="updateTaskStatus(task)" />
+            <span class="ml-2">To Do</span>
+          </label>
+          <label class="inline-flex items-center mr-4">
+            <input type="radio" v-model="task.status" value="inProgress" class="form-radio" @change="updateTaskStatus(task)" />
+            <span class="ml-2">In Progress</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="radio" v-model="task.status" value="done" class="form-radio" @change="updateTaskStatus(task)" />
+            <span class="ml-2">Done</span>
+          </label>
+        </div>
     <div class="mb-2">
       <label for="progress">Progress: {{ progress }}%</label>
       <progress id="progress" :value="progress" max="100" class="w-full"></progress>
