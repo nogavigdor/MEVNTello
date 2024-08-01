@@ -35,12 +35,8 @@
   };
   
   const tasksByStatus = (status: string) => {
-    return tasksStore.tasksByListId.value.filter(task => task.status === status);
+    return tasksStore.tasks.filter(task => task.status === status);
   };
-
-  onMounted(async () => {
-  await tasksStore.fetchAllTasks();
-});
   </script>
   
   <style scoped>

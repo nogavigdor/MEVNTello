@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import apiClient from '../services/apiClient';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { List, NewList } from '@/interfaces/IList';
 import axios from 'axios';
 

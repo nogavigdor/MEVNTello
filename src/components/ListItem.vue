@@ -1,5 +1,6 @@
 <template>
     <div class="bg-gray-100 rounded-lg p-4 w-80">
+      {{ isLeader }}
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold">{{ list.name }}</h2>
         <div v-if="isLeader" class="space-x-2">
@@ -39,7 +40,7 @@
   import { NewTask } from '@/interfaces/ITask';
   import { User } from '@/interfaces/IUser';
   
-  const props = defineProps<{ list: List, projectId: string }>();
+  const props = defineProps<{ list: List, projectId: string, isLeader: boolean }>();
   
   const tasksStore = useTaskStore();
   const listsStore = useListStore();
@@ -67,9 +68,9 @@
     return member ? member.username : 'Unknown';
   };
   
-  const isLeader = computed(() => {
-    return project.value?.teamMembers.some(member => member._id === userStore.user?._id && member.role === 'leader');
-  });
+  // const isLeader = computed(() => {
+  //  return project.value?.teamMembers.some(member => member._id === userStore.user?._id && member.role === 'leader') || userStore.user?.role === 'admin';
+  //});
   
   const editList = (listId: string) => {
     // Handle edit list logic

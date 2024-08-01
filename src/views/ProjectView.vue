@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useProjectStore } from '@/stores/projectStore';
 import { useListStore } from '@/stores/listStore';
@@ -60,10 +60,27 @@ const fetchProjectDetails = async (projectId: string) => {
   }
 };
 
+const projectId = computed(() => route.params.id.toString());
+
+watch(presentation, async (newValue) => {
+  if (newValue === 'trello') {
+    await fetchTrello();
+  } else {
+    await fetchKanban();
+  }
+});
+
+async function fetchTrello() {
+  await fetchProjectDetails(projectId.value);
+}
+
+async function fetchKanban() {
+  await tasksStore.fetchTasksByProject(projectId.value);
+}
+
 onMounted(async () => {
-  const projectId = route.params.id.toString();
-  await userStore.fetchAllUsers(); 
-  await fetchProjectDetails(projectId);
+    await userStore.fetchAllUsers();
+    await fetchTrello();
 });
 
 onUnmounted(() => {
