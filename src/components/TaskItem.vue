@@ -30,11 +30,11 @@
           </label>
         </div>
     <div class="mb-2">
-      <label for="progress">Progress: {{ progress }}%</label>
+      <label for="progress">Progress: {{ props.task.hoursUsed }} / {{ props.task.hoursAllocated }} hours</label>
       <progress id="progress" :value="progress" max="100" class="w-full"></progress>
     </div>
       <div class="flex flex-wrap space-x-2">
-        <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700" v-for="member in task.assignedMembers" :key="member._id">{{ member._id }}</span>
+        <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700" v-for="member in task.assignedMembers" :key="member._id">{{ member.username }}</span>
       </div>
     </div>
   </template>

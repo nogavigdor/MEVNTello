@@ -41,7 +41,7 @@
   import { User } from '@/interfaces/IUser';
   
   const props = defineProps<{ list: List, projectId: string, isLeader: boolean }>();
-  
+
   const tasksStore = useTaskStore();
   const listsStore = useListStore();
   const userStore = useUserStore();
@@ -73,7 +73,7 @@
   //});
   
   const editList = (listId: string) => {
-    // Handle edit list logic
+    currentList = listsStore.lists.find(list => list._id === listId);
   };
   
   const deleteList = async (listId: string) => {
