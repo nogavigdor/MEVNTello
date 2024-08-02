@@ -103,5 +103,8 @@ export const useUserStore = defineStore('users', {
     getUsers(state): User[] {
       return state.users;
     },
+    isAdmin(state): boolean {
+      return state.user?.role === 'admin';
+    },
   },
 });

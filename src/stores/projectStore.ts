@@ -1,10 +1,14 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import apiClient from '../services/apiClient';
 import { Project } from '../interfaces/IProject';
+import { useUserStore } from './userStore';
+import { TeamMember } from '../interfaces/ITeamMember';
 
 export const useProjectStore = defineStore('projects', () => {
   const projects = ref<Project[]>([]);
+  const userStore = useUserStore();
+  const currentRole = ref<string | null>(null);
 
   const fetchProjects = async () => {
     try {
@@ -105,12 +109,32 @@ export const useProjectStore = defineStore('projects', () => {
     return projects.value.find((p) => p._id === projectId);
   };
 
+  // Get the role of a team member in a project
   const getTeamMemberRole = (projectId: string, memberId: string) => {
     const project = projects.value.find((p) => p._id === projectId);
     if (!project) return null;
     const teamMember = project.teamMembers.find((m) => m._id === memberId);
     return teamMember ? teamMember.role : null;
   };
+
+  const fetchUserRole = async (projectId: string) => {
+    const project = await fetchProjectById(projectId);
+    if (!project) {
+      currentRole.value = null;
+      return;
+    }
+
+    const user = userStore.user;
+    if (!user) {
+      currentRole.value = null;
+      return;
+    }
+
+    const teamMember = project.teamMembers.find((member: TeamMember) => member._id === user._id);
+    currentRole.value = teamMember ? teamMember.role : null;
+  };
+
+  const isLeader = computed(() => currentRole.value === 'leader');
 
   return {
     projects,
@@ -124,5 +148,7 @@ export const useProjectStore = defineStore('projects', () => {
     removeTeamMember,
     getProjectById,
     getTeamMemberRole,
+    fetchUserRole,
+    isLeader,
   };
 });
