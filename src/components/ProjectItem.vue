@@ -4,7 +4,7 @@
         <div v-for="status in statuses" :key="status" class="bg-gray-100 rounded-lg p-4 w-80">
           <h2 class="text-xl font-semibold mb-4">{{ statusLabels[status] }}</h2>
           <div v-for="task in tasksByStatus(status)" :key="task._id" class="mb-4">
-            <TaskItem :task="task" :projectId="projectId" />
+            <TaskItem :task="task" :projectId="projectId" :isLeader="isLeader"/>
           </div>
         </div>
       </div>

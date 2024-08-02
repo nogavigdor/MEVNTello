@@ -8,7 +8,7 @@
           <button class="text-red-500 hover:text-red-700" @click="deleteList(list._id)">🗑️</button>
         </div>
       </div>
-      <TaskItem v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id" :task="task" :projectId="props.projectId" />
+      <TaskItem v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id" :task="task" :projectId="props.projectId" :isLeader="isLeader" />
       <button v-if="isLeader" class="bg-green-500 text-white p-2 rounded mt-4" @click="showAddTaskModal = true">Add Task</button>
       <div v-if="showAddTaskModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
         <div class="bg-white p-6 rounded shadow-lg w-96">
