@@ -73,7 +73,7 @@
   //});
   
   const editList = (listId: string) => {
-    currentList = listsStore.lists.find(list => list._id === listId);
+    const currentList = listsStore.lists.find(list => list._id === listId);
   };
   
   const deleteList = async (listId: string) => {
