@@ -12,19 +12,11 @@ import { useTaskStore } from '@/stores/taskStore';
 import TaskItem from '@/components/TaskItem.vue';
 
 const props = defineProps<{ steps: string[] }>();
-const tasksStore = useTaskStore();
 
-const statuses = ['todo', 'inProgress', 'done'];
-const statusLabels: { [key: string]: string } = {
 
-}
-const tasksByStatus = (status: string) => {
-    return tasksStore.tasks.filter(task => task.status === status);
-};  
 
-onMounted(() => {
-    tasksStore.fetchTasksByProject(props.projectId);
-});
+
+
 
 </script>
 <style scoped>
