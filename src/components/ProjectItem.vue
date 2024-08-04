@@ -50,11 +50,6 @@ import AdminOptions from '@/components/AdminOptions.vue';
 import { Project } from '@/interfaces/IProject';
 import { Task } from '@/interfaces/ITask';
 
-// Extend the Project interface for use in this component
-interface ExtendedProject extends Project {
-  completedTasks?: number;
-}
-
 const props = defineProps(["project"]);
 
 const showDetails = ref(false);
@@ -63,8 +58,7 @@ const projectStore = useProjectStore();
 const userStore = useUserStore();
 const taskStore = useTaskStore();
 
-const projects = ref<ExtendedProject[]>([]);
-const isAdminOrLeader = computed(() => userStore.user?.role === 'admin' || userStore.user?.role === 'leader');
+const isAdminOrLeader = computed(() => userStore.user?.role === 'admin' || props.project.role === 'leader');
 
 const projectTasks = ref<Task[]>([]);
 

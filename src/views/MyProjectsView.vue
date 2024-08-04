@@ -59,7 +59,7 @@ const fetchTasksForProjects = async () => {
   if (userId.value) {
     const fetchedTasks = await taskStore.fetchTasksByProject(userId.value);
     console.log ('The fetched Tasks on Monunt are:', fetchedTasks);
-    projectTasks.value = fetchedTasks;
+    projectTasks.value = fetchedTasks?? [];
   }
 };
 

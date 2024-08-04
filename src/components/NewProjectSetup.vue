@@ -79,6 +79,7 @@
   // Setup ref data for form and roles
 const form = ref<Project>({
   name: '',
+  creationStatus: 'tasks', // Initialize with 'todo' status
   description: '',
   creator: userStore.user?._id as string,
   startDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
