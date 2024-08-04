@@ -46,7 +46,7 @@
           </div>
         </div>
   
-        <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded">Create Project</button>
+        <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded">Save Project and Continue</button>
       </form>
     </div>
   </template>
@@ -59,6 +59,7 @@
   import { Project } from '@/interfaces/IProject'; 
   import { TeamMember } from '@/interfaces/ITeamMember';
   import { defineProps } from 'vue';
+  import router from '@/router';
 
     // const props = defineProps<{ users: User[] }>();
   
@@ -121,8 +122,9 @@ const form = ref<Project>({
   
   
     try {
-      await projectStore.createProject(projectData);
+      const newProject =await projectStore.createProject(projectData);
       alert('Project created successfully!');
+      router.replace(`/projects/${newProject._id}`);
     } catch (error) {
       alert('Failed to create project');
       console.error(error);

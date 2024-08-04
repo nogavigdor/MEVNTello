@@ -10,7 +10,7 @@ describe('MainNav', () => {
   });
   it('displays menu items for navigation', () => {
     render(MainNav);
-    const navigationMenuItems = screen.getAllByRole('listitem');
+    const navigationMenuItems = screen.getAllByRole('ListPresentation');
     const navigationMenuTexts = navigationMenuItems.map(
       (item) => item.textContent
     );

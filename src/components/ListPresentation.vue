@@ -8,7 +8,7 @@
           <button class="text-red-500 hover:text-red-700" @click="deleteList(list._id)">🗑️</button>
         </div>
       </div>
-      <TaskItem v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id" :task="task" :projectId="props.projectId" :isLeader="isLeader" />
+      <TaskPresentation v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id" :task="task" :projectId="props.projectId" :isLeader="isLeader" />
       <button v-if="isLeader" class="bg-green-500 text-white p-2 rounded mt-4" @click="showAddTaskModal = true">Add Task</button>
       <div v-if="showAddTaskModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
         <div class="bg-white p-6 rounded shadow-lg w-96">
@@ -35,7 +35,7 @@
   import { useListStore } from '@/stores/listStore';
   import { useUserStore } from '@/stores/userStore';
   import { useProjectStore } from '@/stores/projectStore';
-  import TaskItem from './TaskItem.vue';
+  import TaskPresentation from './TaskPresentation.vue';
   import { List } from '@/interfaces/IList';
   import { NewTask } from '@/interfaces/ITask';
   import { User } from '@/interfaces/IUser';

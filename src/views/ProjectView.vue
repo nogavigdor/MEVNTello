@@ -10,9 +10,9 @@
       </button>
     </div>
 
-    <ProjectItem :projectId="project?._id ?? ''" :presentation="presentation" :isLeader="isLeader" />
+    <ProjectPresentation :projectId="project?._id ?? ''" :presentation="presentation" :isLeader="isLeader" />
     
-    <div v-if="isLeader">
+    <div v-if="isLeader && presentation=='trello'">
       <button class="bg-green-500 text-white p-2 rounded" @click="showAddListModal = true">Add List</button>
     </div>
     
@@ -36,7 +36,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useListStore } from '@/stores/listStore';
 import { useTaskStore } from '@/stores/taskStore';
 import { Project } from '@/interfaces/IProject';
-import ProjectItem from '@/components/ProjectItem.vue'; // Adjust the path accordingly
+import ProjectPresentation from '@/components/ProjectPresentation.vue'; // Adjust the path accordingly
 import { useUserStore } from '@/stores/userStore';
 import { NewList } from '@/interfaces/IList';
 

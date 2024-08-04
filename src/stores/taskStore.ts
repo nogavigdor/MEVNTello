@@ -9,8 +9,11 @@ export const useTaskStore = defineStore('task', () => {
   //two dimensional array of lists (id's) and their tasks (Task objects)
   const tasksByListId = ref<{ [key: string]: Task[] }>({});
 
-  //array of all tasks
+  //array of all tasks for a specific project
   const tasks = ref<Task[]>([]);
+
+  //array of all tasks for a specific user
+  const userTasks = ref<Task[]>([]);
 
 
 
@@ -25,11 +28,11 @@ export const useTaskStore = defineStore('task', () => {
     }
   };
 
-  //fetch all tasks
+  //fetch all tasks for a logged in user
   const fetchAllTasks = async () => {
     try {
       const response = await apiClient.get(`/tasks`);
-      tasks.value = response.data;
+      userTasks.value = response.data;
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
     }
@@ -40,6 +43,7 @@ export const useTaskStore = defineStore('task', () => {
     try {
       const response = await apiClient.get(`/tasks/project/${projectId}`);
       tasks.value = response.data;
+      return tasks.value;
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
     }

@@ -1,45 +1,107 @@
 <template>
-    <div>
-      <div v-if="presentation === 'kanban'" class="flex space-x-4 overflow-x-auto">
-        <div v-for="status in statuses" :key="status" class="bg-gray-100 rounded-lg p-4 w-80">
-          <h2 class="text-xl font-semibold mb-4">{{ statusLabels[status] }}</h2>
-          <div v-for="task in tasksByStatus(status)" :key="task._id" class="mb-4">
-            <TaskItem :task="task" :projectId="projectId" :isLeader="isLeader"/>
+    <li class="p-4 bg-white rounded-lg shadow">
+    <div class="flex justify-between items-center">
+      <div>
+        <router-link :to="`/projects/${project._id}`" class="text-lg font-medium text-primary hover:underline">
+          {{ project.name }}
+        </router-link>
+        <p>{{ project.description }}</p>
+        <div class="flex space-x-2 mt-2">
+          <span v-for="member in project.teamMembers" :key="member._id" class="text-sm">
+            {{ member.username }} <span v-if="member.role === 'leader'" class="text-primary">(Leader)</span>
+          </span>
+        </div>
+      </div>
+      <div>
+        <p :class="{'text-red-500': isOverdue}">{{ formatDate(project.endDate) }}</p>
+        <StatusIcon :status="getProjectStatus" />
+      </div>
+      <button @click="showDetails = !showDetails" class="text-lg focus:outline-none">
+        <i :class="showDetails ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+        hggjgdhdgfhgfdh
+      </button>
+    </div>
+    <transition name="slide-fade">
+      <div v-if="showDetails" class="mt-4">
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <p>Tasks: {{ completedTasks }} / {{ totalTasks }}</p>
+          </div>
+          <div>
+            <p>Hours: {{ getUsedHours }} / {{ project.allocatedHours }}</p>
+            <progress :value="getUsedHours" :max="project.allocatedHours"></progress>
+          </div>
+          <div>
+            <AdminOptions v-if="isAdminOrLeader" :projectId="project._id" />
           </div>
         </div>
       </div>
-      <div v-else class="flex space-x-4 overflow-x-auto">
-        <ListItem v-for="list in listsStore.lists" :key="list._id" :list="list" :projectId="projectId" :isLeader="isLeader" />
-      </div>
-    </div>
-  </template>
-  
-  <script setup lang="ts">
-  import { ref, computed, defineProps, onMounted } from 'vue';
-  import { useTaskStore } from '@/stores/taskStore';
-  import { useListStore } from '@/stores/listStore';
-  import TaskItem from '@/components/TaskItem.vue';
-  import ListItem from '@/components/ListItem.vue';
-  import { Task } from '@/interfaces/ITask';
-  
-  const props = defineProps<{ projectId: string, presentation: 'kanban' | 'trello', isLeader: boolean }>();
-  
-  const tasksStore = useTaskStore();
-  const listsStore = useListStore();
-  
-  const statuses = ['todo', 'inProgress', 'done'];
-  const statusLabels: { [key: string]: string } = {
-    todo: 'To Do',
-    inProgress: 'In Progress',
-    done: 'Done'
-  };
-  
-  const tasksByStatus = (status: string) => {
-    return tasksStore.tasks.filter(task => task.status === status);
-  };
-  </script>
-  
-  <style scoped>
-  
-  </style>
-  
+    </transition>
+  </li>
+</template>
+<script setup lang="ts">
+import { onMounted, ref, computed, watch, defineProps } from 'vue';
+import { useProjectStore } from '@/stores/projectStore';
+import { useUserStore } from '@/stores/userStore';
+import { useTaskStore } from '@/stores/taskStore';
+import { formatDate } from '@/utils/date';
+import StatusIcon from '@/components/StatusIcon.vue';
+import AdminOptions from '@/components/AdminOptions.vue';
+import { Project } from '@/interfaces/IProject';
+import { Task } from '@/interfaces/ITask';
+
+// Extend the Project interface for use in this component
+interface ExtendedProject extends Project {
+  completedTasks?: number;
+}
+
+const props = defineProps(["project"]);
+
+const showDetails = ref(false);
+
+const projectStore = useProjectStore();
+const userStore = useUserStore();
+const taskStore = useTaskStore();
+
+const projects = ref<ExtendedProject[]>([]);
+const isAdminOrLeader = computed(() => userStore.user?.role === 'admin' || userStore.user?.role === 'leader');
+
+const projectTasks = ref<Task[]>([]);
+
+// Fetch tasks for the current user’s projects
+const fetchTasksForByProject = async () => {
+  if (props.project._id) {
+    const fetchedTasks = await taskStore.fetchTasksByProject(props.project._id);
+    console.log ('The fetched Tasks on Monunt are:', fetchedTasks);
+    projectTasks.value = fetchedTasks ?? [];
+  }
+};
+
+onMounted(fetchTasksForByProject);
+
+const getProjectStatus = computed(() => {
+  if (completedTasks.value === totalTasks.value) {
+    return 'done';
+  } else if (completedTasks.value === 0) {
+    return 'todo';
+  } else {
+    return 'inProgress';
+  }
+});
+
+const completedTasks = computed(() => {
+  return projectTasks.value.filter(task => task.status === 'done').length;
+});
+
+const totalTasks = computed(() => {
+  return projectTasks.value.length;
+});
+
+const getUsedHours = computed(() => {
+  return projectTasks.value.reduce((acc, task) => acc + task.hoursUsed, 0);
+});
+
+const isOverdue = computed(() => {
+  return new Date(props.project.endDate) < new Date();
+});
+</script>
