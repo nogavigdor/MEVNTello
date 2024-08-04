@@ -11,7 +11,7 @@ import { ref, computed, defineProps, onMounted } from 'vue';
 import { useTaskStore } from '@/stores/taskStore';
 import TaskPresentation from '@/components/TaskPresentation.vue';
 
-const props = defineProps<{ steps: string[] }>();
+const props = defineProps<{ steps: string[], indicator: string }>();
 
 
 

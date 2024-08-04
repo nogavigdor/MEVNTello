@@ -75,7 +75,7 @@ onMounted(fetchTasksForByProject);
 
 const getProjectStatus = computed(() => {
   if (completedTasks.value === totalTasks.value) {
-    return 'done';
+    return 'Completed';
   } else if (completedTasks.value === 0) {
     return 'todo';
   } else {
@@ -98,4 +98,8 @@ const getUsedHours = computed(() => {
 const isOverdue = computed(() => {
   return new Date(props.project.endDate) < new Date();
 });
+
+
+
+
 </script>

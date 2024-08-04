@@ -52,7 +52,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, defineEmits } from 'vue';
   import { useUserStore } from '@/stores/userStore';
   import { useProjectStore } from '@/stores/projectStore';
   import { User } from '@/interfaces/IUser'; 
@@ -68,7 +68,8 @@
   const userStore = useUserStore();
   const projectStore = useProjectStore();
   const selectedTeamMembers = ref<string[]>([]);
-    const roles = ref<Record<string, string>>({});
+  const roles = ref<Record<string, string>>({});
+  const emit = defineEmits(['update-status']);
 
     onMounted(async () => {
   await userStore.fetchAllUsers();
@@ -125,6 +126,7 @@ const form = ref<Project>({
     try {
       const newProject =await projectStore.createProject(projectData);
       alert('Project created successfully!');
+      emit('update-status', 'tasks'); // Emit the event to update the project status
       router.replace(`/projects/${newProject._id}`);
     } catch (error) {
       alert('Failed to create project');
