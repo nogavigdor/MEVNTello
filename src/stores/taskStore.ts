@@ -49,6 +49,16 @@ export const useTaskStore = defineStore('task', () => {
     }
   }
 
+  //fetch all tasks templates
+  const fetchTaskTemplates = async () => {
+    try {
+      const response = await apiClient.get(`/tasks/templates`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch task templates:', error);
+    }
+  };
+
   //get a task by task's id
     const getTaskById = (taskId: string) => {
       for (const listId in tasksByListId.value) {
@@ -114,5 +124,6 @@ export const useTaskStore = defineStore('task', () => {
     updateTask,
     deleteTask,
     tasks,
+    fetchTaskTemplates,
   };
 });

@@ -40,7 +40,7 @@
   </li>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, computed, watch, defineProps } from 'vue';
+import { onMounted, ref, computed, watch, defineProps} from 'vue';
 import { useProjectStore } from '@/stores/projectStore';
 import { useUserStore } from '@/stores/userStore';
 import { useTaskStore } from '@/stores/taskStore';

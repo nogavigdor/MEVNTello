@@ -1,64 +1,77 @@
 <template>
-    <div class="p-8">
-      <h1 class="text-2xl font-bold text-primary mb-4">Create New Project</h1>
-      <form @submit.prevent="submitForm">
-        <!-- Project name input -->
+  <div class="p-8">
+    <h1 class="text-2xl font-bold text-primary mb-4">Create New Project</h1>
+    <form @submit.prevent="submitForm" class="grid grid-cols-2 gap-4">
+      <div>
+        <!-- Project details section -->
         <div class="mb-4">
           <label for="projectName" class="block text-sm font-medium text-gray-700">Project Name</label>
           <input type="text" id="projectName" v-model="form.name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
         </div>
-  
-        <!-- Project description input -->
         <div class="mb-4">
           <label for="projectDescription" class="block text-sm font-medium text-gray-700">Description</label>
           <textarea id="projectDescription" v-model="form.description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"></textarea>
         </div>
-  
-        <!-- Allocated hours input -->
         <div class="mb-4">
           <label for="allocatedHours" class="block text-sm font-medium text-gray-700">Allocated Hours</label>
           <input type="number" id="allocatedHours" v-model.number="form.allocatedHours" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
         </div>
-  
-        <!-- Start date input -->
         <div class="mb-4">
           <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
           <input type="date" id="startDate" v-model="form.startDate" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
         </div>
-  
-        <!-- End date input -->
         <div class="mb-4">
           <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
           <input type="date" id="endDate" v-model="form.endDate" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
         </div>
-  
-        <!-- Dynamic team member assignment with role selection -->
+      </div>
+
+      <!-- Team member assignment and task templates section -->
+      <div>
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700">Assign Team Members and Roles</label>
-          <div v-for="user in users" :key="user._id" class="flex items-center space-x-3 mb-2">
-           <!-- Make sure this is inside the v-for loop -->
-            <input type="checkbox" :value="user._id" @change="handleCheckboxChange($event, user._id)">
-            <span>{{ user.username }}</span>
-            <select v-model="roles[user._id]">
-              <option value="member">Member</option>
-              <option value="leader">Leader</option>
-            </select>
+          <div class="h-48 overflow-y-auto border border-gray-300 rounded-md p-2">
+            <div v-for="user in users" :key="user._id" class="flex items-center space-x-3 mb-2">
+              <input type="checkbox" :value="user._id" @change="handleCheckboxChange($event, user._id)">
+              <span>{{ user.username }}</span>
+              <select v-model="roles[user._id]">
+                <option value="member">Member</option>
+                <option value="leader">Leader</option>
+              </select>
+            </div>
           </div>
         </div>
-  
-        <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded">Save Project and Continue</button>
-      </form>
-    </div>
-  </template>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700">Select Task Template</label>
+          <div class="h-48 overflow-y-auto border border-gray-300 rounded-md p-2">
+            <div v-for="template in taskTemplates" :key="template._id" class="flex items-center space-x-3 mb-2">
+              <input type="radio" :value="template._id" v-model="selectedTemplate">
+              <span>{{ template.name }}</span>
+            </div>
+            <div>
+              <input type="radio" value="" v-model="selectedTemplate">
+              <span>Start without template</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded">Save Project and Continue</button>
+  </div>
+</template>
   
   <script setup lang="ts">
   import { ref, onMounted, defineEmits } from 'vue';
   import { useUserStore } from '@/stores/userStore';
   import { useProjectStore } from '@/stores/projectStore';
+  import { useTaskStore } from '@/stores/taskStore';
   import { User } from '@/interfaces/IUser'; 
   import { Project } from '@/interfaces/IProject'; 
+  import { TaskTemplate } from '@/interfaces/ITaskTemplate';
   import { TeamMember } from '@/interfaces/ITeamMember';
   import { defineProps } from 'vue';
+
   import router from '@/router';
 
     // const props = defineProps<{ users: User[] }>();
@@ -67,12 +80,15 @@
 
   const userStore = useUserStore();
   const projectStore = useProjectStore();
+  const tasksStore = useTaskStore();
+  const taskTemplates = ref<TaskTemplate[]>([]);
   const selectedTeamMembers = ref<string[]>([]);
   const roles = ref<Record<string, string>>({});
   const emit = defineEmits(['update-status']);
 
     onMounted(async () => {
   await userStore.fetchAllUsers();
+  await tasksStore.fetchTaskTemplates();
   users.value = userStore.getUsers;
   users.value.forEach(user => roles.value[user._id] = 'member'); // Default to 'member'
 });
@@ -126,7 +142,6 @@ const form = ref<Project>({
     try {
       const newProject =await projectStore.createProject(projectData);
       alert('Project created successfully!');
-      emit('update-status', 'tasks'); // Emit the event to update the project status
       router.replace(`/projects/${newProject._id}`);
     } catch (error) {
       alert('Failed to create project');

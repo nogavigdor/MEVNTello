@@ -5,7 +5,7 @@
       <button class="bg-primary text-white px-4 py-2 rounded shadow hover:bg-primary-dark">Add New Project</button>
     </div>
     <ul class="space-y-4">
-      <ProjectItem v-for="project in projects" :key="project._id" :project="project" @completed-tasks=""/>
+      <ProjectItem v-for="project in projects" :key="project._id" :project="project" />
     </ul>
   </div>
 </template>
@@ -49,46 +49,7 @@ const fetchProjects = async () => {
 // Fetch projects on component mount
 onMounted(fetchProjects);
 
-console.log ('The fetched Projects on Monunt are:', projects.value);
 
-// Reactive variable to hold project tasks with proper typing
-const projectTasks = ref<Task[]>([]);
-
-// Fetch tasks for the current user’s projects
-//const fetchTasksForProjects = async () => {
- // if (userId.value) {
-  //  const fetchedTasks = await taskStore.fetchTasksByProject(userId.value);
-  //  console.log ('The fetched Tasks on Monunt are:', fetchedTasks);
-  //  projectTasks.value = fetchedTasks?? [];
- // }
-//};
-
-// Fetch tasks on component mount
-//onMounted(fetchTasksForProjects);
-
-// Watch for changes in project tasks and update completed tasks
-//watch(projectTasks, (newTasks) => {
- // projects.value.forEach((project) => {
- //   project.completedTasks = getCompletedTasks(project);
- // });
-//}, { deep: true });
-
-// Computed property to get all incomplete tasks
-//const incompleteTasks = computed(() => {
- // return projectTasks.value.filter(task => task.status === 'todo' || task.status === 'inProgress');
-//});
-
-// Utility functions
-const isOverdue = (project: Project) => {
-  const today = new Date();
-  const dueDate = new Date(project.endDate);
-  return dueDate < today;
-};
-
-const getProjectStatus = (project: Project) => {
-  if (isOverdue(project)) return 'overdue';
-  return 'ongoing';
-};
 
 </script>
 <style scoped>
