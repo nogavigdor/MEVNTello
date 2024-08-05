@@ -56,8 +56,9 @@
           </div>
         </div>
       </div>
+      <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded">Save Project and Continue</button>
     </form>
-    <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded">Save Project and Continue</button>
+   
   </div>
 </template>
   
