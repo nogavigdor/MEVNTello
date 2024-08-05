@@ -11,7 +11,7 @@ const checkProjectCreationStatus = async (to: RouteLocationNormalized, from: Rou
 
   try {
     const project = await projectStore.fetchProjectById(projectId);
-    if (project && project.creationStatus !== 'complete') {
+    if (project && project.creationStatus && project.creationStatus !== 'complete') {
       next({
         name: 'NewProject',
         query: { creationStatus: project.creationStatus, projectId: projectId }
@@ -87,7 +87,7 @@ router.beforeEach((to, from, next) => {
     next({ name: 'Dashboard' });
   }
   else {
-    next(); // make sure to always call next()!
+    next(); 
   }
 });
 

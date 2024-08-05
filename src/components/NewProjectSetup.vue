@@ -82,28 +82,32 @@
   const projectStore = useProjectStore();
   const tasksStore = useTaskStore();
   const taskTemplates = ref<TaskTemplate[]>([]);
-  const selectedTeamMembers = ref<string[]>([]);
   const roles = ref<Record<string, string>>({});
+  const selectedTemplate = ref(null); // Add selectedTemplate ref with type argument
+  const selectedTeamMembers = ref<string[]>([]); // Declare selectedTeamMembers ref
   const emit = defineEmits(['update-status']);
-
-    onMounted(async () => {
-  await userStore.fetchAllUsers();
-  await tasksStore.fetchTaskTemplates();
-  users.value = userStore.getUsers;
-  users.value.forEach(user => roles.value[user._id] = 'member'); // Default to 'member'
-});
-
+  
+  onMounted(async () => {
+    await userStore.fetchAllUsers();
+    await tasksStore.fetchTaskTemplates();
+    console.log('all task tamplates', tasksStore.taskTemplates);
+    users.value = userStore.getUsers;
+    users.value.forEach(user => roles.value[user._id] = 'member'); // Default to 'member'
+  });
+  
+  taskTemplates.value = tasksStore.taskTemplates;
+  
   // Setup ref data for form and roles
-const form = ref<Project>({
-  name: '',
-  creationStatus: 'tasks', // Initialize with 'todo' status
-  description: '',
-  creator: userStore.user?._id as string,
-  startDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
-  endDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
-  allocatedHours: 0,
-  teamMembers: []
-});
+  const form = ref<Project>({
+    name: '',
+    creationStatus: 'tasks', // Initialize with 'todo' status
+    description: '',
+    creator: userStore.user?._id as string,
+    startDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
+    endDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
+    allocatedHours: 0,
+    teamMembers: []
+  });
   
 
   

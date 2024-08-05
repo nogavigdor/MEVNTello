@@ -8,24 +8,8 @@
           <button class="text-red-500 hover:text-red-700" @click="deleteList(list._id)">🗑️</button>
         </div>
       </div>
-      <TaskPresentation v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id" :task="task" :projectId="props.projectId" :isLeader="isLeader" />
-      <button v-if="isLeader" class="bg-green-500 text-white p-2 rounded mt-4" @click="showAddTaskModal = true">Add Task</button>
-      <div v-if="showAddTaskModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-        <div class="bg-white p-6 rounded shadow-lg w-96">
-          <h2 class="text-xl font-bold mb-4" v-if="isLeader">Add New Task</h2>
-          <input v-model="newTask.name" class="border rounded w-full p-2 mb-4" placeholder="Task Name" />
-          <input v-model="newTask.description" class="border rounded w-full p-2 mb-4" placeholder="Task Description" />
-          <input v-model="newTask.hoursAllocated" type="number" class="border rounded w-full p-2 mb-4" placeholder="Hours Allocated" />
-          <label class="block mb-2">Assign Members</label>
-          <select v-model="selectedMembers" multiple class="border rounded w-full p-2 mb-4">
-            <option v-for="member in projectTeamMembers" :key="member._id" :value="member._id">{{ getMemberName(member._id) }}</option>
-          </select>
-          <div class="flex justify-end space-x-2">
-            <button class="bg-gray-500 text-white p-2 rounded" @click="showAddTaskModal = false">Cancel</button>
-            <button class="bg-blue-500 text-white p-2 rounded" @click="addTask">Add</button>
-          </div>
-        </div>
-      </div>
+      <TaskPresentation v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id" :task="task" :projectId="props.projectId" :projectTaemMembers="projectTeamMembers" :isLeader="isLeader" />
+      <AddTaskModal :listId="list._id" :projectTeamMembers="projectTeamMembers" v-if="isLeader" />
     </div>
   </template>
   
@@ -39,6 +23,7 @@
   import { List } from '@/interfaces/IList';
   import { NewTask } from '@/interfaces/ITask';
   import { User } from '@/interfaces/IUser';
+  import AddTaskModal from './AddTaskModal.vue';
   
   const props = defineProps<{ list: List, projectId: string, isLeader: boolean }>();
 

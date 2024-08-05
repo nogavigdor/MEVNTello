@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { Task, NewTask } from '../interfaces/ITask';
+import { TaskTemplate } from '@/interfaces/ITaskTemplate';
 import apiClient from '../services/apiClient';
 import axios from 'axios';
 
@@ -14,6 +15,9 @@ export const useTaskStore = defineStore('task', () => {
 
   //array of all tasks for a specific user
   const userTasks = ref<Task[]>([]);
+
+  //array of all tasks templates
+  const taskTemplates = ref<TaskTemplate[]>([]);
 
 
 
@@ -53,6 +57,7 @@ export const useTaskStore = defineStore('task', () => {
   const fetchTaskTemplates = async () => {
     try {
       const response = await apiClient.get(`/tasks/templates`);
+      taskTemplates.value = response.data;
       return response.data;
     } catch (error) {
       console.error('Failed to fetch task templates:', error);
@@ -125,5 +130,6 @@ export const useTaskStore = defineStore('task', () => {
     deleteTask,
     tasks,
     fetchTaskTemplates,
+    taskTemplates,
   };
 });
