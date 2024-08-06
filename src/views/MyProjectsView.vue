@@ -2,7 +2,12 @@
   <div class="p-8">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold text-primary">My Projects</h1>
-      <button class="bg-primary text-white px-4 py-2 rounded shadow hover:bg-primary-dark">Add New Project</button>
+      <router-link
+        to="/projects/new"
+        class="bg-primary text-white px-4 py-2 rounded shadow hover:bg-primary-dark"
+      >
+        Add New Project
+      </router-link>
     </div>
     <ul class="space-y-4">
       <ProjectItem v-for="project in projects" :key="project._id" :project="project" />
