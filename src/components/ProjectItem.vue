@@ -17,7 +17,7 @@
         <StatusIcon :status="getProjectStatus" />
       </div>
       <button @click="showDetails = !showDetails" class="text-lg focus:outline-none">
-        <i :class="showDetails ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+        <i :class="iconClass"></i>
         hggjgdhdgfhgfdh
       </button>
     </div>
@@ -54,6 +54,10 @@ const props = defineProps(["project"]);
 
 const showDetails = ref(false);
 
+const iconClass = computed(() => {
+  return showDetails.value ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+});
+
 const projectStore = useProjectStore();
 const userStore = useUserStore();
 const taskStore = useTaskStore();
@@ -76,8 +80,6 @@ onMounted(fetchTasksForByProject);
 const getProjectStatus = computed(() => {
   if (completedTasks.value === totalTasks.value) {
     return 'Completed';
-  } else if (completedTasks.value === 0) {
-    return 'todo';
   } else {
     return 'inProgress';
   }

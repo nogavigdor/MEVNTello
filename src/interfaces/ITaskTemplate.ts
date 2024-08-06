@@ -3,8 +3,10 @@ export interface TaskTemplate {
   _id: string;
   name: string;
   lists: {
+    _id: string;
     name: string;
     tasks: {
+      _id: string;
       name: string;
       description: string;
     }[];
