@@ -72,7 +72,7 @@
   import { TaskTemplate } from '@/interfaces/ITaskTemplate';
   import { TeamMember } from '@/interfaces/ITeamMember';
   import { defineProps } from 'vue';
-
+  
   import router from '@/router';
 
     // const props = defineProps<{ users: User[] }>();
@@ -84,7 +84,7 @@
   const tasksStore = useTaskStore();
   const taskTemplates = ref<TaskTemplate[]>([]);
   const roles = ref<Record<string, string>>({});
-  const selectedTemplate = ref(null); // Add selectedTemplate ref with type argument
+  const selectedTemplate = ref<string | undefined>(undefined); // Update the type of selectedTemplate ref
   const selectedTeamMembers = ref<string[]>([]); // Declare selectedTeamMembers ref
   const emit = defineEmits(['update-status']);
   
@@ -101,7 +101,8 @@
   // Setup ref data for form and roles
   const form = ref<Project>({
     name: '',
-    creationStatus: 'tasks', // Initialize with 'todo' status
+    creationStatus: 'tasks', // Initialize with 'todo' status,
+    selectedTemplate:'',
     description: '',
     creator: userStore.user?._id as string,
     startDate: new Date(new Date().toISOString().split('T')[0]), // Initialize with today's date in YYYY-MM-DD format
@@ -129,6 +130,8 @@
     const projectData: Project = {
       ...form.value,
       //overides default form values with the form input values
+      creationStatus: 'tasks',
+      selectedTemplate: selectedTemplate.value,
       startDate: new Date(form.value.startDate),
       endDate: new Date(form.value.endDate),
       teamMembers: selectedTeamMembers.value.map(_id => ({
@@ -147,7 +150,8 @@
     try {
       const newProject =await projectStore.createProject(projectData);
       alert('Project created successfully!');
-      router.replace(`/projects/${newProject._id}`);
+      //router.replace(`/projects/${newProject._id}`);
+      emit('update-status', 'tasks'); 
     } catch (error) {
       alert('Failed to create project');
       console.error(error);

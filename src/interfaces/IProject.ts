@@ -3,6 +3,7 @@ import { TeamMember } from './ITeamMember';
 export interface Project {
   _id?: string;  // new projects won't have an ID until they are created in the database
   creationStatus: 'tasks' | 'management' | 'complete';
+  selectedTemplate?: string;  // Task Template ID
   name: string;
   description: string;
   startDate: Date;

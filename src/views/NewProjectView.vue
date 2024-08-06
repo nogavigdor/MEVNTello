@@ -4,7 +4,7 @@
   <StepsIndicator :steps="['Setup', 'Tasks', 'Management']" :indicator="creationStatus"/>
 
   <!-- Conditional rendering of components based on the projectStatus -->
-  <NewProjectSetup v-if="creationStatus=='setup'"/>
+  <NewProjectSetup v-if="creationStatus=='setup'" @update-status="updateProjectStatus"/>
   <NewProjectTasks v-if="creationStatus=='tasks'" :projectId="projectId" @update-status="updateProjectStatus"/>
   <NewProjectManagement v-if="creationStatus=='management'" :projectId="projectId" @update-status="updateProjectStatus"/>
 </template>
