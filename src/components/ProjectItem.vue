@@ -16,9 +16,8 @@
         <p :class="{'text-red-500': isOverdue}">{{ formatDate(project.endDate) }}</p>
         <StatusIcon :status="getProjectStatus" />
       </div>
-      <button @click="showDetails = !showDetails" class="text-lg focus:outline-none">
-        <i :class="iconClass"></i>
-        hggjgdhdgfhgfdh
+      <button @click="toggleDetails">
+        <font-awesome-icon :icon="iconClass" />
       </button>
     </div>
     <transition name="slide-fade">
@@ -49,14 +48,20 @@ import StatusIcon from '@/components/StatusIcon.vue';
 import AdminOptions from '@/components/AdminOptions.vue';
 import { Project } from '@/interfaces/IProject';
 import { Task } from '@/interfaces/ITask';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 const props = defineProps(["project"]);
 
 const showDetails = ref(false);
 
+const toggleDetails = () => {
+  showDetails.value = !showDetails.value;
+};
+
 const iconClass = computed(() => {
   return showDetails.value ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
 });
+
 
 const projectStore = useProjectStore();
 const userStore = useUserStore();
@@ -65,6 +70,7 @@ const taskStore = useTaskStore();
 const isAdminOrLeader = computed(() => userStore.user?.role === 'admin' || props.project.role === 'leader');
 
 const projectTasks = ref<Task[]>([]);
+
 
 // Fetch tasks for the current user’s projects
 const fetchTasksForByProject = async () => {
