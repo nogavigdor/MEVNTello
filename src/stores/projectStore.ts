@@ -24,6 +24,9 @@ export const useProjectStore = defineStore('projects', () => {
   const fetchProjectById = async (projectId: string) => {
     try {
       const response = await apiClient.get(`/projects/${projectId}`);
+      if (!getProjectById(projectId)) {
+        projects.value.push(response.data);
+      }
       return response.data;
     } catch (error) {
       console.error('Failed to fetch project:', error);

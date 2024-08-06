@@ -63,7 +63,7 @@
 </template>
   
   <script setup lang="ts">
-  import { ref, onMounted, defineEmits } from 'vue';
+  import { ref, onMounted, defineEmits, computed } from 'vue';
   import { useUserStore } from '@/stores/userStore';
   import { useProjectStore } from '@/stores/projectStore';
   import { useTaskStore } from '@/stores/taskStore';
@@ -82,11 +82,11 @@
   const userStore = useUserStore();
   const projectStore = useProjectStore();
   const tasksStore = useTaskStore();
-  const taskTemplates = ref<TaskTemplate[]>([]);
+  // const taskTemplates = ref<TaskTemplate[]>([]);
   const roles = ref<Record<string, string>>({});
   const selectedTemplate = ref<string | undefined>(undefined); // Update the type of selectedTemplate ref
   const selectedTeamMembers = ref<string[]>([]); // Declare selectedTeamMembers ref
-  const emit = defineEmits(['update-status']);
+
   
   onMounted(async () => {
     await userStore.fetchAllUsers();
@@ -96,7 +96,7 @@
     users.value.forEach(user => roles.value[user._id] = 'member'); // Default to 'member'
   });
   
-  taskTemplates.value = tasksStore.taskTemplates;
+  const taskTemplates = computed(() => tasksStore.taskTemplates);
   
   // Setup ref data for form and roles
   const form = ref<Project>({
@@ -150,8 +150,8 @@
     try {
       const newProject =await projectStore.createProject(projectData);
       alert('Project created successfully!');
-      //router.replace(`/projects/${newProject._id}`);
-      emit('update-status', 'tasks'); 
+      router.replace(`/projects/${newProject._id}`);
+   
     } catch (error) {
       alert('Failed to create project');
       console.error(error);
