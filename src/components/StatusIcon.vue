@@ -36,6 +36,8 @@
         return 'hourglass-half';
       case 'overdue':
         return 'exclamation-circle';
+      case 'todo':
+        return 'circle';
       default:
         return 'circle';
     }
@@ -49,6 +51,8 @@
         return 'This project is in progress.';
       case 'overdue':
         return 'This project is overdue.';
+      case 'todo':
+        return 'This project is not started yet.';
       default:
         return 'Status unknown.';
     }

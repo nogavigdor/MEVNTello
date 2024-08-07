@@ -19,6 +19,7 @@ import { useUserStore } from '@/stores/userStore';
 import { useTaskStore } from '@/stores/taskStore';
 import { TeamMember } from '@/interfaces/ITeamMember';
 
+
 const props = defineProps({listId: { type: String, required: true }, projectTeamMembers: { type: Array<TeamMember>, required: true } });
 const userStore = useUserStore();
 const taskStore = useTaskStore();
@@ -49,7 +50,7 @@ const getMemberName = (memberId: string ) => {
     // Map selected member IDs to TeamMember objects
     newTask.value.assignedMembers = selectedMembers.value.map(id => {
       const member = props.projectTeamMembers.find(m => m._id === id);
-      return member ? { _id: member._id, username: getMemberName(member._id), role: member.role } : { _id: id, username: 'Unknown', role: 'member' };
+      return member ? { _id: member._id, username: getMemberName(id), role: member.role, usedHours: 0 } : { _id: id, username: 'Unknown', role: 'member', usedHours: 0 };
     });
     await taskStore.createTask(props.listId, newTask.value);
     newTask.value = {

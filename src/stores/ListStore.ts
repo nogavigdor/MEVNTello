@@ -51,10 +51,15 @@ export const useListStore = defineStore('list', () => {
         console.error('Failed to delete list:', error);
         }
     };
+
+    const getListById = (listId: string) => {
+        return lists.value.find((l) => l._id === listId);
+    }
     
     return {
         lists,
         fetchLists,
+        getListById,
         createList,
         updateList,
         deleteList,

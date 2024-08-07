@@ -84,8 +84,12 @@ const fetchTasksForByProject = async () => {
 onMounted(fetchTasksForByProject);
 
 const getProjectStatus = computed(() => {
-  if (completedTasks.value === totalTasks.value) {
+  if (totalTasks.value === 0) {
+    return 'todo';
+  } else if (completedTasks.value === totalTasks.value) {
     return 'Completed';
+  } if (isOverdue.value) {
+    return 'overdue';
   } else {
     return 'inProgress';
   }

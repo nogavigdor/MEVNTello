@@ -1,6 +1,6 @@
 import { TeamMember } from './ITeamMember';
 
 export interface AssignedMember extends TeamMember {
-    allocatedHours: number;
+    allocatedHours?: number;
     usedHours: number;
 }

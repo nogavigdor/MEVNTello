@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { Task, NewTask } from '../interfaces/ITask';
 import { TaskTemplate } from '@/interfaces/ITaskTemplate';
 import apiClient from '../services/apiClient';
-import axios from 'axios';
+import { useListStore } from './listStore';
 
 export const useTaskStore = defineStore('task', () => {
   
@@ -20,6 +20,7 @@ export const useTaskStore = defineStore('task', () => {
   const taskTemplates = ref<TaskTemplate[]>([]);
 
 
+  const listStore = useListStore(); // Initialize the list store
 
 
   //fetch tasks by list id
@@ -41,11 +42,6 @@ export const useTaskStore = defineStore('task', () => {
       console.error('Failed to fetch tasks:', error);
     }
   };
-
-  //get all tasks have at at least 90% usage of their allocated hours
- const getCloseToOverdueTasks = () => {
-   return tasks.value.filter(task => task.hoursUsed >= task.hoursAllocated * 0.9);
-  }
 
   //fetch all tasks for a project
   const fetchTasksByProject = async (projectId: string) => {
@@ -79,6 +75,21 @@ export const useTaskStore = defineStore('task', () => {
       }
       return null;
     };
+    const getProjectIdForTask = (taskId: string) => {
+      for (const listId in tasksByListId.value) {
+        const task = tasksByListId.value[listId].find(t => t._id === taskId);
+        if (task) {
+          const list = listStore.getListById(task.listId);
+          return list ? list.projectId : null;
+        }
+      }
+      return null;
+    };
+    //get all tasks have at at least 90% usage of their allocated hours
+    const getCloseToOverdueTasks = () => {
+      return tasks.value.filter(task => task.hoursUsed >= task.hoursAllocated * 0.9);
+    }
+
 
   //create a new task
   const createTask = async (listId: string, taskData: NewTask) => {
@@ -130,6 +141,7 @@ export const useTaskStore = defineStore('task', () => {
     fetchTasks,
     fetchTasksByProject,
     getCloseToOverdueTasks,
+    getProjectIdForTask,
     getTaskById,
     createTask,
     updateTask,

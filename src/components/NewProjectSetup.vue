@@ -31,7 +31,7 @@
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700">Assign Team Members and Roles</label>
           <div class="h-48 overflow-y-auto border border-gray-300 rounded-md p-2">
-            <div v-for="user in users" :key="user._id" class="flex items-center space-x-3 mb-2">
+            <div v-for="user in filteredUsers" :key="user._id" class="flex items-center space-x-3 mb-2">
               <input type="checkbox" :value="user._id" @change="handleCheckboxChange($event, user._id)">
               <span>{{ user.username }}</span>
               <select v-model="roles[user._id]">
@@ -95,6 +95,9 @@
     users.value = userStore.getUsers;
     users.value.forEach(user => roles.value[user._id] = 'member'); // Default to 'member'
   });
+  const loggedInUser = computed(() => userStore.user?._id);
+
+  const filteredUsers = computed(() => users.value.filter(user => user._id !== loggedInUser.value));
   
   const taskTemplates = computed(() => tasksStore.taskTemplates);
   

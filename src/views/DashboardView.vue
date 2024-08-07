@@ -26,10 +26,12 @@
   </template>
   
   <script setup lang="ts">
+  import { ref } from 'vue';
+  import { useProjectStore } from '@/stores/projectStore';
  
   </script>
   
   <style scoped>
-  /* Tailwind utilities are used here, you might want to adjust margins, paddings and other aspects based on your actual layout needs */
+  
   </style>
   
