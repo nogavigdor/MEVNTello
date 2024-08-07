@@ -42,6 +42,11 @@ export const useTaskStore = defineStore('task', () => {
     }
   };
 
+  //get all tasks have at at least 90% usage of their allocated hours
+ const getCloseToOverdueTasks = () => {
+   return tasks.value.filter(task => task.hoursUsed >= task.hoursAllocated * 0.9);
+  }
+
   //fetch all tasks for a project
   const fetchTasksByProject = async (projectId: string) => {
     try {
@@ -124,6 +129,7 @@ export const useTaskStore = defineStore('task', () => {
     fetchAllTasks,
     fetchTasks,
     fetchTasksByProject,
+    getCloseToOverdueTasks,
     getTaskById,
     createTask,
     updateTask,
