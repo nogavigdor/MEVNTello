@@ -9,22 +9,22 @@
       </div>
       <div class="flex mb-2">
           <label class="inline-flex items-center mr-4">
-            <input type="radio" v-model="task.status" value="todo" class="form-radio" @change="updateTaskStatus(task)" />
+            <input type="radio" v-model="task.status" value="todo" class="form-radio" @change="updateTask({ status: task.status })" />
             <span class="ml-2">To Do</span>
           </label>
           <label class="inline-flex items-center mr-4">
-            <input type="radio" v-model="task.status" value="inProgress" class="form-radio" @change="updateTaskStatus(task)" />
+            <input type="radio" v-model="task.status" value="inProgress" class="form-radio" @change="updateTask({ status: task.status})" />
             <span class="ml-2">In Progress</span>
           </label>
           <label class="inline-flex items-center">
-            <input type="radio" v-model="task.status" value="done" class="form-radio" @change="updateTaskStatus(task)" />
+            <input type="radio" v-model="task.status" value="done" class="form-radio" @change="updateTask({ status: task.status})" />
             <span class="ml-2">Done</span>
           </label>
         </div>
       <p class="mb-2">Allocated Hours: {{ task.hoursAllocated }}</p>
       <div v-for="member in task.assignedMembers" :key="member._id" class="mb-2">
       <p class="mb-2">{{ member.username }}'s Used Hours: 
-        <span v-if="isLeader || isTaskMember(task)">
+        <span v-if="amImemberInTask(member)">
           <input type="number" v-model="member.usedHours" class="border rounded px-2 py-1 w-full" @input="onMemberInputChange(member._id, member.usedHours)" />
         </span>
         <span v-else>{{ member.usedHours }}</span>
@@ -72,15 +72,15 @@
   const inputHoursUsed = ref(props.task.hoursUsed);
   
   const project = computed<Project | undefined>(() => projectStore.getProjectById(props.projectId));
-  
+
   const showEditModal = ref(false);
   
   const isTaskMember = (task: Task) => {
-    return task.assignedMembers.some(member => member._id === userStore.user?._id);
+    return props.task.assignedMembers.some(member => member._id === userStore.user?._id);
   };
   
-  const updateTask = async (updatedTask: Task) => {
-  await tasksStore.updateTask(updatedTask._id, updatedTask);
+  const updateTask = async (updatedTask: Partial<Task>) => {
+  await tasksStore.updateTask(props.task._id, updatedTask);
   showEditModal.value = false;
 };
   
@@ -111,6 +111,10 @@ const totalProgress = computed(() => {
   ? Math.min((totalUsedHours.value / props.task.hoursAllocated) * 100, 100)
   :0;
 });
+
+const amImemberInTask = (member: AssignedMember) => {
+  return member._id === userStore.user?._id;
+};
   </script>
   
   <style scoped>
