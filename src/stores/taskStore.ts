@@ -134,6 +134,29 @@ export const useTaskStore = defineStore('task', () => {
       }
     };
 
+  //updating used hours for a task for a specific user
+  const updateMemberUsedHours = async (taskId: string, memberId: string, usedHours: number) => {
+    try {
+      const task = getTaskById(taskId);
+      if (task) {
+        const memberIndex = task.assignedMembers.findIndex(m => m._id === memberId);
+        if (memberIndex !== -1) {
+          task.assignedMembers[memberIndex].usedHours = usedHours;
+          const response = await apiClient.put(`/tasks/${taskId}`, task);
+          const updatedTask = response.data;
+          for (const listId in tasksByListId.value) {
+            const index = tasksByListId.value[listId].findIndex(t => t._id === taskId);
+            if (index !== -1) {
+              tasksByListId.value[listId][index] = updatedTask;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update member used hours:', error);
+    }
+  };
+
 
   return {
     tasksByListId,
@@ -149,5 +172,6 @@ export const useTaskStore = defineStore('task', () => {
     tasks,
     fetchTaskTemplates,
     taskTemplates,
+    updateMemberUsedHours,
   };
 });
