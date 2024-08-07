@@ -9,8 +9,11 @@
         Add New Project
       </router-link>
     </div>
-    <ul class="space-y-4">
+    <ul v-if="projects.length>0" class="space-y-4">
       <ProjectItem v-for="project in projects" :key="project._id" :project="project" />
+    </ul>
+    <ul v-else>
+      <p>No projects are found.</p>
     </ul>
   </div>
 </template>

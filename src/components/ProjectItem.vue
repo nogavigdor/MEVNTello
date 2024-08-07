@@ -8,7 +8,7 @@
         <p>{{ project.description }}</p>
         <div class="flex space-x-2 mt-2">
           <span v-for="member in project.teamMembers" :key="member._id" class="text-sm">
-            {{ member.username }} <span v-if="member.role === 'leader'" class="text-primary">(Leader)</span>
+            {{ getUsername(member._id) }} <span v-if="member.role === 'leader'" class="text-primary">(Leader)</span>
           </span>
         </div>
       </div>
@@ -79,6 +79,11 @@ const fetchTasksForByProject = async () => {
     console.log ('The fetched Tasks on Monunt are:', fetchedTasks);
     projectTasks.value = fetchedTasks ?? [];
   }
+};
+
+const getUsername = (userId: string) => {
+  const user = userStore.fetchUs
+  return user?.name;
 };
 
 onMounted(fetchTasksForByProject);
