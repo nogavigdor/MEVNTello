@@ -8,7 +8,8 @@
         <p>{{ project.description }}</p>
         <div class="flex space-x-2 mt-2">
           <span v-for="member in project.teamMembers" :key="member._id" class="text-sm">
-            {{ getUsername(member._id) }} <span v-if="member.role === 'leader'" class="text-primary">(Leader)</span>
+            {{ getUsername(member._id) }} <span v-if="member.role === 'leader'" class="text-primary">: Leader</span>
+            <span v-else class="text-secondary">(Member)</span>
           </span>
         </div>
       </div>
@@ -81,12 +82,18 @@ const fetchTasksForByProject = async () => {
   }
 };
 
-const getUsername = (userId: string) => {
-  const user = userStore.fetchUs
-  return user?.name;
-};
+const getUsername = computed(() => {
+  return (userId: string) => {
+    const user = userStore.getUserById(userId);
+    console.log('The user is:', user);
+    return user?.username;
+  };
+});
 
-onMounted(fetchTasksForByProject);
+onMounted( async () => {
+  await fetchTasksForByProject();
+  await userStore.fetchAllUsers();
+});
 
 const getProjectStatus = computed(() => {
   if (totalTasks.value === 0) {
