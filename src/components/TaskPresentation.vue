@@ -8,35 +8,20 @@
         </div>
       </div>
       <p class="mb-2">Allocated Hours: {{ task.hoursAllocated }}</p>
-      <p class="mb-2">Used Hours: 
+      <div v-for="member in task.assignedMembers" :key="member._id" class="mb-2">
+      <p class="mb-2">{{ member.username }}'s Used Hours: 
         <span v-if="isLeader || isTaskMember(task)">
-          <input type="number" v-model="inputHoursUsed" class="border rounded px-2 py-1 w-full" @input="onInputChange" />
+          <input type="number" v-model="member.usedHours" class="border rounded px-2 py-1 w-full" @input="onMemberInputChange(member._id, member.usedHours)" />
         </span>
-        <span v-else>{{ task.hoursUsed }}</span>
+        <span v-else>{{ member.usedHours }}</span>
       </p>
-      <p class="mb-2">Status:</p>
-        <div class="flex mb-2">
-          <label class="inline-flex items-center mr-4">
-            <input type="radio" v-model="task.status" value="todo" class="form-radio" @change="updateTaskStatus(task)" />
-            <span class="ml-2">To Do</span>
-          </label>
-          <label class="inline-flex items-center mr-4">
-            <input type="radio" v-model="task.status" value="inProgress" class="form-radio" @change="updateTaskStatus(task)" />
-            <span class="ml-2">In Progress</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="radio" v-model="task.status" value="done" class="form-radio" @change="updateTaskStatus(task)" />
-            <span class="ml-2">Done</span>
-          </label>
-        </div>
+      <progress :value="memberProgress(member)" max="100" class="w-full"></progress>
+    </div>
     <div class="mb-2">
-      <label for="progress">Progress: {{ props.task.hoursUsed }} / {{ props.task.hoursAllocated }} hours</label>
-      <progress id="progress" :value="progress" max="100" class="w-full"></progress>
+      <label for="progress">Total Progress: {{ totalUsedHours }} / {{ task.hoursAllocated }} hours</label>
+      <progress id="progress" :value="totalProgress" max="100" class="w-full"></progress>
     </div>
-      <div class="flex flex-wrap space-x-2">
-        <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700" v-for="member in task.assignedMembers" :key="member._id">{{ member.username }}</span>
-      </div>
-    </div>
+  </div>
   </template>
   
   <script setup lang="ts">
@@ -47,6 +32,7 @@
   import { Task } from '@/interfaces/ITask';
   import { Project } from '@/interfaces/IProject';
   import { useProjectStore } from '@/stores/projectStore';
+  import { AssignedMember } from '@/interfaces/IAssignedMember';
   //handles the debouncing of the input field
   import { debounce} from 'lodash';
   
@@ -71,31 +57,27 @@
   
   const deleteTask = async (taskId: string) => {
     await tasksStore.deleteTask(taskId);
-    // Additional logic if needed
+  
   };
   
-  const updateHoursUsed = async (task: Task) => {
-    await tasksStore.updateTask(task._id, { hoursUsed: task.hoursUsed });
-  };
+  const updateMemberUsedHours = debounce(async (memberId: string, usedHours: number) => {
+  await tasksStore.updateMemberUsedHours(props.task._id, memberId, usedHours);
+}, 300);
 
-  const updateTaskStatus = async (task: Task) => {
-  await tasksStore.updateTask(task._id, { status: task.status });
+const onMemberInputChange = (memberId: string, usedHours: number) => {
+  updateMemberUsedHours(memberId, usedHours);
 };
 
-const debouncedUpdateHoursUsed = debounce(async (task: Task) => {
-  if (task.hoursUsed > task.hoursAllocated) {
-    alert('Used hours exceed allocated hours!');
-  }
-  await tasksStore.updateTask(task._id, { hoursUsed: task.hoursUsed });
-}, 300); 
-
-const onInputChange = () => {
-  props.task.hoursUsed = inputHoursUsed.value;
-  debouncedUpdateHoursUsed(props.task);
+const memberProgress = (member: AssignedMember) => {
+  return Math.min((member.usedHours / props.task.hoursAllocated) * 100, 100);
 };
 
-const progress = computed(() => {
-  return Math.min((props.task.hoursUsed / props.task.hoursAllocated) * 100, 100);
+const totalUsedHours = computed(() => {
+  return props.task.assignedMembers.reduce((acc, member) => acc + member.usedHours, 0);
+});
+
+const totalProgress = computed(() => {
+  return Math.min((totalUsedHours.value / props.task.hoursAllocated) * 100, 100);
 });
   </script>
   
