@@ -3,7 +3,6 @@
       <div class="flex justify-between items-center mb-2">
         <h3 class="text-lg font-medium">{{ task.name }}</h3>
         <div v-if="isLeader || isTaskMember(task)" class="space-x-2">
-          <button class="text-blue-500 hover:text-blue-700" @click="editTask(task._id)">✏️</button>
           <button v-if="isLeader" class="text-red-500 hover:text-red-700" @click="deleteTask(task._id)">🗑️</button>
         </div>
       </div>
@@ -25,7 +24,7 @@
       <div v-for="member in task.assignedMembers" :key="member._id" class="mb-2">
       <p class="mb-2">{{ member.username }}'s Used Hours: 
         <span v-if="amImemberInTask(member)">
-          <input type="number" v-model="member.usedHours" class="border rounded px-2 py-1 w-full" @input="onMemberInputChange(member._id, member.usedHours)" />
+          <input type="number" v-model="member.usedHours" class="border rounded px-2 py-1 w-full" @input="onMemberInputChange(member._id ?? '', member.usedHours)" />
         </span>
         <span v-else>{{ member.usedHours }}</span>
       </p>
@@ -35,17 +34,6 @@
       <label for="progress">Total Progress: {{ totalUsedHours }} / {{ task.hoursAllocated }} hours</label>
       <progress id="progress" :value="totalProgress" max="100" class="w-full"></progress>
     </div>
-
-    <!-- Edit Task Modal -->
-    <EditTaskModal
-      v-if="showEditModal"
-      :task="task"
-      :projectTeamMembers="projectTeamMembers"
-      buttonText="Edit Task"
-      modalTitle="Edit Task"
-      @onSave="updateTask"
-      @close="showEditModal = false"
-    />
   </div>
   </template>
   
@@ -118,6 +106,6 @@ const amImemberInTask = (member: AssignedMember) => {
   </script>
   
   <style scoped>
-  /* Add your styles here */
+
   </style>
   
