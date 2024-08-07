@@ -2,6 +2,9 @@
     <aside class="bg-gray-100 text-primary shadow-md" v-if="isAuthenticated">
       <ul class="space-y-2 p-4">
         <li>
+          <router-link to="/dashboard" class="block">Dashboard</router-link>
+        </li>
+        <li>
           <router-link to="/projects" class="block">My Projects</router-link>
         </li>
         <li>

@@ -1,4 +1,4 @@
-import { TeamMember } from './ITeamMember';
+import { AssignedMember } from './IAssignedMember';
 import SubTask from './ISubTask';
 //Interface for the tast object
 export interface Task {
@@ -6,7 +6,7 @@ export interface Task {
     listId: string;
     name: string;
     description: string;
-    assignedMembers: TeamMember[]; // Array of User IDs
+    assignedMembers: AssignedMember[]; // Array of User IDs
     hoursAllocated: number;
     hoursUsed: number;
     status: 'todo' | 'inProgress' | 'done';

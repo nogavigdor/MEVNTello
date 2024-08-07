@@ -98,7 +98,7 @@
       alert('Task name cannot be empty');
       return;
     }
-    const newTask = await tasksStore.createTask(listId, { name: newTaskName.value, description: '', hoursAllocated: 0, hoursUsed: 0, status: 'todo', assignedMembers: [], listId });
+    const newTask = await tasksStore.createTask(listId, { name: newTaskName.value, description: '', hoursAllocated: 0, hoursUsed: 0, status: 'todo', assignedMembers: [], listId, subTasks: [] });
     if (!tasksByListId.value[listId]) {
       tasksByListId.value[listId] = [];
     }
