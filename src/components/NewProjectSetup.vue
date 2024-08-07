@@ -153,6 +153,9 @@
     try {
       const newProject =await projectStore.createProject(projectData);
       alert('Project created successfully!');
+      //once reaching the ProjectView, before entering the view, the router wiil create 
+      //the creationStatus of the project in the url query and the ProjectView will use it to
+      //determine which componend to show
       router.replace(`/projects/${newProject._id}`);
    
     } catch (error) {
