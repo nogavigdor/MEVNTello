@@ -7,6 +7,20 @@
           <button v-if="isLeader" class="text-red-500 hover:text-red-700" @click="deleteTask(task._id)">🗑️</button>
         </div>
       </div>
+      <div class="flex mb-2">
+          <label class="inline-flex items-center mr-4">
+            <input type="radio" v-model="task.status" value="todo" class="form-radio" @change="updateTaskStatus(task)" />
+            <span class="ml-2">To Do</span>
+          </label>
+          <label class="inline-flex items-center mr-4">
+            <input type="radio" v-model="task.status" value="inProgress" class="form-radio" @change="updateTaskStatus(task)" />
+            <span class="ml-2">In Progress</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="radio" v-model="task.status" value="done" class="form-radio" @change="updateTaskStatus(task)" />
+            <span class="ml-2">Done</span>
+          </label>
+        </div>
       <p class="mb-2">Allocated Hours: {{ task.hoursAllocated }}</p>
       <div v-for="member in task.assignedMembers" :key="member._id" class="mb-2">
       <p class="mb-2">{{ member.username }}'s Used Hours: 
@@ -21,6 +35,17 @@
       <label for="progress">Total Progress: {{ totalUsedHours }} / {{ task.hoursAllocated }} hours</label>
       <progress id="progress" :value="totalProgress" max="100" class="w-full"></progress>
     </div>
+
+    <!-- Edit Task Modal -->
+    <EditTaskModal
+      v-if="showEditModal"
+      :task="task"
+      :projectTeamMembers="projectTeamMembers"
+      buttonText="Edit Task"
+      modalTitle="Edit Task"
+      @onSave="updateTask"
+      @close="showEditModal = false"
+    />
   </div>
   </template>
   
@@ -35,8 +60,10 @@
   import { AssignedMember } from '@/interfaces/IAssignedMember';
   //handles the debouncing of the input field
   import { debounce} from 'lodash';
+  import EditTaskModal from './EditTaskModal.vue';
+  import { TeamMember } from '@/interfaces/ITeamMember';
   
-  const props = defineProps<{ task: Task, projectId: string, isLeader: boolean }>();
+  const props = defineProps<{ task: Task, projectId: string, isLeader: boolean, projectTeamMembers: TeamMember[] }>();
   
   const tasksStore = useTaskStore();
   const userStore = useUserStore();
@@ -46,23 +73,25 @@
   
   const project = computed<Project | undefined>(() => projectStore.getProjectById(props.projectId));
   
+  const showEditModal = ref(false);
   
   const isTaskMember = (task: Task) => {
     return task.assignedMembers.some(member => member._id === userStore.user?._id);
   };
   
-  const editTask = (taskId: string) => {
-    // Handle edit task logic
-  };
+  const updateTask = async (updatedTask: Task) => {
+  await tasksStore.updateTask(updatedTask._id, updatedTask);
+  showEditModal.value = false;
+};
   
+const updateMemberUsedHours = debounce(async (memberId: string, usedHours: number) => {
+  await tasksStore.updateMemberUsedHours(props.task._id, memberId, usedHours);
+}, 300);
+
   const deleteTask = async (taskId: string) => {
     await tasksStore.deleteTask(taskId);
   
   };
-  
-  const updateMemberUsedHours = debounce(async (memberId: string, usedHours: number) => {
-  await tasksStore.updateMemberUsedHours(props.task._id, memberId, usedHours);
-}, 300);
 
 const onMemberInputChange = (memberId: string, usedHours: number) => {
   updateMemberUsedHours(memberId, usedHours);
@@ -77,7 +106,10 @@ const totalUsedHours = computed(() => {
 });
 
 const totalProgress = computed(() => {
-  return Math.min((totalUsedHours.value / props.task.hoursAllocated) * 100, 100);
+  //in casa the hours allocated are 0, we return 0 to avoid division by 0
+  return props.task.hoursAllocated > 0 
+  ? Math.min((totalUsedHours.value / props.task.hoursAllocated) * 100, 100)
+  :0;
 });
   </script>
   
