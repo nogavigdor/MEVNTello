@@ -8,7 +8,7 @@
           <button class="text-red-500 hover:text-red-700" @click="deleteList(list._id)">🗑️</button>
         </div>
       </div>
-      <TaskPresentation v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id" :task="task" :projectId="props.projectId" :projectTaemMembers="projectTeamMembers" :isLeader="isLeader" />
+      <TaskPresentation v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id" :task="task" :projectId="props.projectId" :projectTeamMembers="projectTeamMembers" :isLeader="isLeader" />
       <AddTaskModal :listId="list._id" :projectTeamMembers="projectTeamMembers" v-if="isLeader" />
     </div>
   </template>
@@ -74,7 +74,9 @@
     // Map selected member IDs to TeamMember objects
     newTask.value.assignedMembers = selectedMembers.value.map(id => {
       const member = projectTeamMembers.value.find(m => m._id === id);
-      return member ? { _id: member._id, username: getMemberName(member._id), role: member.role } : { _id: id, username: 'Unknown', role: 'member' };
+      return member
+      ? { _id: member._id ?? '', username: getMemberName(member._id ?? ''), role: member.role, usedHours:0, allocatedHours:0 }
+        : { _id: id, username: 'Unknown', role: 'member', usedHours:0, allocatedHours:0  };
     });
     await tasksStore.createTask(props.list._id, newTask.value);
     showAddTaskModal.value = false;
