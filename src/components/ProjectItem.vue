@@ -13,9 +13,9 @@
           </span>
         </div>
       </div>
-      <div>
+      <div class="flex space-x-4">
         <p :class="{'text-red-500': isOverdue}">{{ formatDate(project.endDate) }}</p>
-        <StatusIcon :status="getProjectStatus" />
+        <StatusIcon :status="getProjectStatus" /> <span>{{ getProjectStatus }}</span>
       </div>
       <button @click="toggleDetails">
         <font-awesome-icon :icon="iconClass" />
