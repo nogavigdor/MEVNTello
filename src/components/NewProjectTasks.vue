@@ -3,12 +3,7 @@
         <div v-for="list in selectedTasksTemplate?.lists" :key="list._id" class="flex-col space-y-4">
             <h2 class="text-xl font-bold">{{ list.name }}</h2>
             <div class="ml-4">
-            <div v-for="task in list.tasks" :key="task._id" class="flex justify-between items-center mb-2">
-              <input type="text" v-model="task.name" />
-              <div>
-                <button @click="deleteTask(task._id, list._id)" class="text-red-500">Delete</button>
-              </div>
-            </div>
+              <NewProjectTasksItem :list="list" />
           </div>
         </div>
       </div>
@@ -43,6 +38,7 @@
   <script setup lang="ts">
   import { ref, onMounted, watch } from 'vue';
   import { useProjectStore } from '@/stores/projectStore';
+  import { useListStore } from '@/stores/listStore';
   import { useTaskStore } from '@/stores/taskStore';
   import { Project } from '@/interfaces/IProject';
   import { Task } from '@/interfaces/ITask';
@@ -52,9 +48,12 @@
   import { TaskTemplate } from '@/interfaces/ITaskTemplate';
   import router from '@/router';
 import { add } from 'lodash';
+import { randomString } from '@/utils/randomString';
+import NewProjectTasksItem from './NewProjectTasksItem.vue';
   
   const route = useRoute();
   const projectStore = useProjectStore();
+  const listStore = useListStore();
   const tasksStore = useTaskStore();
   
   const projectId = route.query.projectId as string;
@@ -84,33 +83,15 @@ import { add } from 'lodash';
     }
   });
   
-  watch(() => addList, async () => {
-    if (newListName.value.trim() === '') {
-      alert('List name cannot be empty');
-    } else {
-      const randomList = Math.floor(Math.random() * 1000);
-      selectedTasksTemplate.value?.lists.push({ _id: randomList.toString(), name: newListName.value, tasks: [] });
-    }
-  });
+ 
   const addList = async () => {
     if (newListName.value.trim() === '') {
       alert('List name cannot be empty');
       return;
     }
-    selectedTasksTemplate.value?.lists.push({ name: newListName.value, tasks: [] });
-  };
   
-  const addTask = async (listId: string) => {
-    if (newTaskName.value.trim() === '') {
-      alert('Task name cannot be empty');
-      return;
-    }
-    const newTask = await tasksStore.createTask(listId, { name: newTaskName.value, description: '', hoursAllocated: 0, hoursUsed: 0, status: 'todo', assignedMembers: [], listId, subTasks: [] });
-    if (!tasksByListId.value[listId]) {
-      tasksByListId.value[listId] = [];
-    }
-    tasksByListId.value[listId].push(newTask);
-    newTaskName.value = '';
+    selectedTasksTemplate.value?.lists.push({ _id: randomString(), name: newListName.value, tasks: [] });
+    newListName.value = '';
   };
   
   const deleteList = async (listId: string) => {
@@ -118,22 +99,13 @@ import { add } from 'lodash';
     lists.value = lists.value.filter(list => list._id !== listId);
     delete tasksByListId.value[listId];
   };
-  
-  const deleteTask = async (taskId: string, listId: string) => {
-    const list = selectedTasksTemplate.value?.lists.find((list) => list._id === listId);
-    if (!list) return;
-    const taskIndex = list.tasks.findIndex((task) => task._id === taskId);
-    list.tasks.splice(taskIndex, 1);
-  };
-  
-  const editTask = (taskId: string) => {
-    // Open a modal or navigate to an edit page
-    console.log('Editing task:', taskId);
-  };
-  
+
+
   const completeStage = () => {
-    projectStore.updateProject(projectId, { creationStatus: 'management' });
-    router.push({ name: 'NewProjectManagement', query: { projectId } });
+    if (project.value) {
+      project.value.creationStatus = 'management';
+      projectStore.updateProject(project.value);
+    }
   };
   </script>
   
