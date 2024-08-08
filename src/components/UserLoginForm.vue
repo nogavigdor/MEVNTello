@@ -41,7 +41,7 @@
 import { ref, defineEmits } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { useMessageStore } from '@/stores/messageStore';
-import router from '@/router';
+
 
 const form = ref({ email: '', password: '' });
 const userStore = useUserStore();
@@ -59,8 +59,7 @@ const handleLogin = async () => {
     'You are now logged in.',
     'success'
     );
-    // Redirect to the dashboard after successful login
-    router.push('/dashboard');
+    
   } catch (error) {
     alert('Login failed');
     console.error('Login failed:', (error as any).response?.data || (error as any).message);

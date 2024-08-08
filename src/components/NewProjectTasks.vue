@@ -1,12 +1,11 @@
 <template>
     <div class="flex space-x-4 overflow-x-auto">
-        <div v-for="list in selectedTasksTemplate?.lists" :key="list._id" class="flex space-x-4">
+        <div v-for="list in selectedTasksTemplate?.lists" :key="list._id" class="flex-col space-y-4">
             <h2 class="text-xl font-bold">{{ list.name }}</h2>
             <div class="ml-4">
             <div v-for="task in list.tasks" :key="task._id" class="flex justify-between items-center mb-2">
               <input type="text" v-model="task.name" />
               <div>
-                <button @click="editTask(task._id)" class="text-blue-500 mr-2">Edit</button>
                 <button @click="deleteTask(task._id, list._id)" class="text-red-500">Delete</button>
               </div>
             </div>
@@ -42,7 +41,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, watch } from 'vue';
   import { useProjectStore } from '@/stores/projectStore';
   import { useTaskStore } from '@/stores/taskStore';
   import { Project } from '@/interfaces/IProject';
@@ -51,6 +50,8 @@
   import { useRoute } from 'vue-router';
   import ListPresentation from './ListPresentation.vue';
   import { TaskTemplate } from '@/interfaces/ITaskTemplate';
+  import router from '@/router';
+import { add } from 'lodash';
   
   const route = useRoute();
   const projectStore = useProjectStore();
@@ -83,14 +84,20 @@
     }
   });
   
+  watch(() => addList, async () => {
+    if (newListName.value.trim() === '') {
+      alert('List name cannot be empty');
+    } else {
+      const randomList = Math.floor(Math.random() * 1000);
+      selectedTasksTemplate.value?.lists.push({ _id: randomList.toString(), name: newListName.value, tasks: [] });
+    }
+  });
   const addList = async () => {
     if (newListName.value.trim() === '') {
       alert('List name cannot be empty');
       return;
     }
-    const newList = await tasksStore.createList(projectId, { name: newListName.value });
-    lists.value.push(newList);
-    newListName.value = '';
+    selectedTasksTemplate.value?.lists.push({ name: newListName.value, tasks: [] });
   };
   
   const addTask = async (listId: string) => {

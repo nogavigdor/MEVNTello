@@ -13,16 +13,21 @@
     import UserLoginForm from '@/components/UserLoginForm.vue';
     import { ref, watch } from 'vue';
     import { useUserStore } from '@/stores/userStore';
+    import { useRouter } from 'vue-router';
 
     // Define the reactive variables
     const userStore = useUserStore();
     const username = ref(userStore.getUsername);
     const user = ref(userStore.getUser);
 
+    const router = useRouter();
+
     // Define the method to handle login success and update the welcome user variable
     const handleLoginSuccess = () => {
       username.value = userStore.getUsername;
       user.value = userStore.getUser;
+      // Redirect to the dashboard after successful login
+      router.push({ name: 'Dashboard' });
     };
 
     // Watch for changes in the store's state and update the local refs

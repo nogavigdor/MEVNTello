@@ -34,6 +34,7 @@ const users = ref<User[]>([]);
 const roles = ref<Record<string, string>>({});
 
 const projectId = ref<string>("");
+//creation status is used to determine which component to render based on the project status
 const creationStatus = computed(() => projectStore.getProjectById(projectId.value)?.creationStatus as string || 'setup');
 
 
