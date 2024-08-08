@@ -30,7 +30,16 @@ const checkProjectCreationStatus = async (to: RouteLocationNormalized, from: Rou
 const routes = [
   { path: '/',
     name: 'Home',
-    component: () => import('../views/HomeView.vue') },
+    component: () => import('../views/HomeView.vue'),
+    beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+      const userStore = useUserStore();
+      if (userStore.isAuthenticated) {
+        next({ name: 'Dashboard' });
+      } else {
+        next();
+      }
+    } },
+    
   
   { path: '/register',
     name: 'Register',
