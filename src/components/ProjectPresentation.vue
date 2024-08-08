@@ -4,7 +4,7 @@
         <div v-for="status in statuses" :key="status" class="bg-gray-100 rounded-lg p-4 w-80">
           <h2 class="text-xl font-semibold mb-4">{{ statusLabels[status] }}</h2>
           <div v-for="task in tasksByStatus(status)" :key="task._id" class="mb-4">
-            <TaskPresentation :task="task" :projectId="projectId" :isLeader="isLeader"/>
+            <TaskPresentation :task="task" :projectId="projectId" :isLeader="isLeader" :projectTeamMembers="projectTeamMembers"/>
           </div>
         </div>
       </div>
@@ -34,9 +34,13 @@
     done: 'Done'
   };
   
+  const project = ref({ teamMembers: [] }); // Define the 'project' variable with the correct type
+  
   const tasksByStatus = (status: string) => {
     return tasksStore.tasks.filter(task => task.status === status);
   };
+  
+  const projectTeamMembers = computed(() => project.value?.teamMembers || []);
   </script>
   
   <style scoped>
