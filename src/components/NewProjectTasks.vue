@@ -1,38 +1,21 @@
 <template>
-    <div class="flex space-x-4 overflow-x-auto">
-        <div v-for="list in selectedTasksTemplate?.lists" :key="list._id" class="flex-col space-y-4">
+    <div class="flex space-x-4 overflow-x-auto mt-8">
+        <div  v-for="list in selectedTasksTemplate?.lists" :key="list._id" class="flex-col space-y-4">
+            <span class="flex space-y-4">
             <h2 class="text-xl font-bold">{{ list.name }}</h2>
-            <div class="ml-4">
+            <button @click="deleteList(list._id)" class="text-red-500">Delete List</button>
+            </span>
+            <div class="flex-col space-y-4 ml-4">
               <NewProjectTasksItem :list="list" />
           </div>
         </div>
       </div>
-    <div class="p-8">
-      <h1 class="text-2xl font-bold text-primary mb-4">Tasks Stage</h1>
-      <div v-if="isLoading">Loading...</div>
-      <div v-else>
-        <div v-for="list in lists" :key="list._id" class="mb-4">
-          <div class="flex justify-between items-center mb-2">
-            <h2 class="text-xl font-bold">{{ list.name }}</h2>
-            <button @click="deleteList(list._id)" class="text-red-500">Delete List</button>
-          </div>
-          <div class="ml-4">
-            <div v-for="task in tasksByListId[list._id]" :key="task._id" class="flex justify-between items-center mb-2">
-              <span>{{ task.name }}</span>
-              <div>
-                <button @click="editTask(task._id)" class="text-blue-500 mr-2">Edit</button>
-                <button @click="deleteTask(task._id)" class="text-red-500">Delete</button>
-              </div>
-            </div>
-          </div>
-          <input v-model="newTaskName" placeholder="New task name" class="border rounded p-2 w-full mb-2" />
-          <button @click="addTask(list._id)" class="bg-green-500 text-white py-2 px-4 rounded">Add Task</button>
-        </div>
-        <input v-model="newListName" placeholder="New list name" class="border rounded p-2 w-full mb-2" />
+    <div class="p-8"></div>
+      <div class="flex space-x-4">
+        <input type="text" v-model="newListName" class="border border-gray-300 p-2" />
         <button @click="addList" class="bg-green-500 text-white py-2 px-4 rounded">Add List</button>
-        <button @click="completeStage" class="bg-blue-500 text-white py-2 px-4 rounded mt-4">Proceed to Management Stage</button>
-      </div>
     </div>
+    <button @click="completeStage" class="bg-accent text-white py-2 px-4 rounded mt-4">Save and Continue</button>
   </template>
   
   <script setup lang="ts">
@@ -94,19 +77,73 @@ import NewProjectTasksItem from './NewProjectTasksItem.vue';
     newListName.value = '';
   };
   
-  const deleteList = async (listId: string) => {
-    await tasksStore.deleteList(listId);
-    lists.value = lists.value.filter(list => list._id !== listId);
-    delete tasksByListId.value[listId];
-  };
-
-
-  const completeStage = () => {
-    if (project.value) {
-      project.value.creationStatus = 'management';
-      projectStore.updateProject(project.value);
+  const deleteList = (listId: string) => {
+    const listIndex = selectedTasksTemplate.value?.lists.findIndex((list) => list._id === listId);
+    if (listIndex === undefined) {
+      return;
     }
+    selectedTasksTemplate.value?.lists.splice(listIndex, 1,);
   };
+
+
+  const completeStage = async () => {
+    if (project.value) {
+       for (const list of selectedTasksTemplate.value?.lists || []) {
+        const newList = await listStore.createList({ name: list.name, projectId: project.value?._id ?? '', tasks: [] });
+        for (const task of list.tasks) {
+          await tasksStore.createTask(newList._id, {  
+            listId: newList._id,
+            name: task.name,
+            description: '',
+            status: 'todo',
+            assignedMembers: [],
+            hoursAllocated: 0,
+            hoursUsed: 0,
+            subTasks: []
+          });
+        }
+
+        //fetching all the tasks of the newly created list
+        await tasksStore.fetchTasks(newList._id);
+        //creating a new list object with the new tasks that were created in the database
+        const newListWithTasks = {
+          _id: newList._id,
+          name: newList.name,
+          projectId: newList.projectId,
+          //populating the list object with the new task that were created in the database
+          tasks: tasksStore.tasks
+        }
+        console.log ('The newListWithTasks is:', newListWithTasks);
+        //updating the list that was created earlier with en empty task array
+        //with the new tasks that were created in the database according to the template
+        await listStore.updateList(newListWithTasks);
+    
+        
+
+      }
+
+      
+       // Fetch the created lists and update the project
+    if (!project.value) {
+      return;
+    }
+    const createdLists = await listStore.fetchLists(project.value._id ?? '');
+    // Updating the project with the new lists that were created and the creation status
+    project.value.lists = createdLists?.map(list => list._id); // Get only the IDs of the lists
+    project.value.creationStatus = 'management';
+    const newProject: Project & {__v?: string;} = {
+      ...project.value,
+    }
+    delete newProject.__v;
+    
+    await projectStore.updateProject(newProject);
+
+    // The navigational guard will redirect the user to the next stage
+    router.replace(`/projects/${project.value._id}`);
+
+  };
+  };
+
   </script>
   
   <style scoped>

@@ -37,7 +37,7 @@ const newTask = ref<NewTask>({
 
 const selectedMembers = ref<string[]>([]);
 
-const getMemberName = (memberId: string ) => {
+const getMemberName = (memberId?: string ) => {
     const member = userStore.users.find((user: User) => user._id === memberId);
     return member ? member.username : 'Unknown';
   };
