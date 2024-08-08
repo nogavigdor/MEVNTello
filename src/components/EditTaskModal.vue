@@ -5,7 +5,7 @@
       <input v-model="editedTask.hoursAllocated" type="number" class="border rounded w-full p-2 mb-4" placeholder="Hours Allocated" />
       <label class="block mb-2">Assign Members</label>
       <select v-model="selectedMembers" multiple class="border rounded w-full p-2 mb-4">
-        <option v-for="member in projectTeamMembers" :key="member._id" :value="member._id">{{ getMemberName(member._id) }}</option>
+        <option v-for="member in projectTeamMembers" :key="member._id" :value="member._id">{{ getMemberName(member._id ?? '') }}</option>
       </select>
     </BaseModal>
   </template>
