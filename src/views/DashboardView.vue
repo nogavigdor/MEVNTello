@@ -10,10 +10,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="p-4 bg-white rounded-lg shadow">
               <h3 class="font-semibold text-gray-900">Upcoming Tasks</h3>
-              <ul class="list-disc list-inside text-gray-600">
-                <li>Task One - due tomorrow</li>
-                <li>Task Two - due next week</li>
-              </ul>
+             <CloseToOverdueTasks/>
             </div>
             <div class="p-4 bg-white rounded-lg shadow">
               <h3 class="font-semibold text-gray-900">Recent Activity</h3>
@@ -28,6 +25,7 @@
   <script setup lang="ts">
   import { ref } from 'vue';
   import { useProjectStore } from '@/stores/projectStore';
+import CloseToOverdueTasks from '@/components/CloseToOverdueTasks.vue';
  
   </script>
   

@@ -105,13 +105,16 @@ import NewProjectTasksItem from './NewProjectTasksItem.vue';
 
         //fetching all the tasks of the newly created list
         await tasksStore.fetchTasks(newList._id);
+
+        //createing an array of tasks IDs ouot of the tasks array of tasks objects
+        const tasksIds = tasksStore.tasks.map(task => task._id);
         //creating a new list object with the new tasks that were created in the database
         const newListWithTasks = {
           _id: newList._id,
           name: newList.name,
           projectId: newList.projectId,
           //populating the list object with the new task that were created in the database
-          tasks: tasksStore.tasks
+          tasks: tasksIds
         }
         console.log ('The newListWithTasks is:', newListWithTasks);
         //updating the list that was created earlier with en empty task array

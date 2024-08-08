@@ -36,7 +36,9 @@ export const useTaskStore = defineStore('task', () => {
   //fetch all tasks for a logged in user
   const fetchAllTasks = async () => {
     try {
+      console.log('The tasks for the user are being fetched');
       const response = await apiClient.get(`/tasks`);
+  
       userTasks.value = response.data;
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
@@ -75,6 +77,9 @@ export const useTaskStore = defineStore('task', () => {
       }
       return null;
     };
+
+    //get the project id of a task by task's id
+    //takssByListId should be updat
     const getProjectIdForTask = (taskId: string) => {
       for (const listId in tasksByListId.value) {
         const task = tasksByListId.value[listId].find(t => t._id === taskId);
@@ -121,7 +126,7 @@ export const useTaskStore = defineStore('task', () => {
     }
   };
 
- 
+
   //delete a task by id
     const deleteTask = async (taskId: string) => {
       try {
