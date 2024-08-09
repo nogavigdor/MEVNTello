@@ -9,7 +9,7 @@
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="p-4 bg-white rounded-lg shadow">
-              <h3 class="font-semibold text-gray-900">Upcoming Tasks</h3>
+              <h3 class="font-semibold text-gray-900">About to be overdue tasks</h3>
              <CloseToOverdueTasks/>
             </div>
             <div class="p-4 bg-white rounded-lg shadow">
