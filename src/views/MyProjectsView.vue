@@ -1,7 +1,7 @@
 <template>
   <div class="p-8">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-primary">My Projects</h1>
+      <h1  class="text-2xl font-bold text-primary">{{ isAdmin?'All Projects':'My Projects'}}</h1>
       <router-link
         to="/projects/new"
         class="bg-primary text-white px-4 py-2 rounded shadow hover:bg-primary-dark"
@@ -42,6 +42,8 @@ const userStore = useUserStore();
 
 // Directly get the current user ID from the user store
 const userId = computed(() => userStore.user?._id);
+
+const isAdmin = computed(() => userStore.isAdmin );
 
 // Reactive variable to hold projects with proper typing
 const projects = ref<Project[]>([]);
