@@ -8,7 +8,7 @@
           <div class="flex justify-between items-center">
             <div>
               <p class="text-lg font-medium">{{ task.name }}</p>
-              <p>Hours Used: {{ task.hoursUsed }} / {{ task.hoursAllocated }}</p>
+              <p>Hours Used: {{ hoursUsed(task) }} / {{ task.hoursAllocated }}</p>
             </div>
             <router-link :to="`/projects/${projectIdForTask(task._id)}`" class="text-primary hover:underline">
               View Project
@@ -19,6 +19,8 @@
       <!-- Message to show when there are no almost overdue tasks -->
       <p v-else class="text-gray-600">No tasks are close to being overdue.</p>
     </div>
+
+    {{  projectStore.projects }}
   </div>
 </template>
 
@@ -42,14 +44,16 @@
   });
   
   const projectIdForTask = (taskId: string) => taskStore.getProjectIdForTask(taskId);
-  
-  const currentProject = computed (() => projectIdForTask);
-  
+
+  //calculate the total used hours that all the assigned members have used for a task
+  const hoursUsed = (task: Task) => task.assignedMembers.reduce((acc, member) => acc + member.usedHours, 0);
   
   onMounted(async () => {
     try {
     //fetching all tasks for a logged in user
     await taskStore.fetchAllTasks();
+    //fetch all projects for a logged in user
+    await projectStore.fetchProjects();
   } catch (error:any) {
     error.value = 'Failed to load tasks. Please try again later.';
     console.error(error);
