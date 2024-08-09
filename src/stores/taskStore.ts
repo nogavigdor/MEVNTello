@@ -4,6 +4,7 @@ import { Task, NewTask } from '../interfaces/ITask';
 import { TaskTemplate } from '@/interfaces/ITaskTemplate';
 import apiClient from '../services/apiClient';
 import { uselistStore } from './listStore';
+import { useProjectStore } from './projectStore';
 
 export const useTaskStore = defineStore('task', () => {
   
@@ -21,6 +22,8 @@ export const useTaskStore = defineStore('task', () => {
 
 
   const listStore = uselistStore(); // Initialize the list store
+
+  const projectStore = useProjectStore(); // Initialize the project store
 
 
   //fetch tasks by list id
@@ -81,18 +84,21 @@ export const useTaskStore = defineStore('task', () => {
     //get the project id of a task by task's id
     //takssByListId should be updat
     const getProjectIdForTask = (taskId: string) => {
-      for (const listId in tasksByListId.value) {
-        const task = tasksByListId.value[listId].find(t => t._id === taskId);
-        if (task) {
-          const list = listStore.getListById(task.listId);
-          return list ? list.projectId : null;
-        }
+      const task = userTasks.value.find(t => t._id === taskId);
+      console.log("TASK -> Project ID:", task);
+      if (task) {
+        console.log("PROJECTS: ", projectStore.projects);
+        const projectId = projectStore.getProjectIdByListId(task.listId);
+        return projectId ?? null;
       }
-      return null;
     };
     //get all tasks have at at least 90% usage of their allocated hours
     const getCloseToOverdueTasks = () => {
-      return tasks.value.filter(task => task.hoursUsed >= task.hoursAllocated * 0.9);
+      return userTasks.value.filter(task => {
+        const hoursUsed = task.assignedMembers.reduce((acc, member) => acc + member.usedHours, 0);
+
+        return hoursUsed >= task.hoursAllocated * 0.9 && task.hoursAllocated > 0 && task.status !== 'done'
+      });
     }
 
 
@@ -147,7 +153,7 @@ export const useTaskStore = defineStore('task', () => {
         const memberIndex = task.assignedMembers.findIndex(m => m._id === memberId);
         if (memberIndex !== -1) {
           task.assignedMembers[memberIndex].usedHours = usedHours;
-          const response = await apiClient.put(`/tasks/${taskId}`, task);
+          const response = await apiClient.put(`/tasks/${taskId}`, { assignedMembers: task.assignedMembers});
           const updatedTask = response.data;
           for (const listId in tasksByListId.value) {
             const index = tasksByListId.value[listId].findIndex(t => t._id === taskId);
