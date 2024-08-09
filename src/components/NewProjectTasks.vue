@@ -150,6 +150,6 @@ import NewProjectTasksItem from './NewProjectTasksItem.vue';
   </script>
   
   <style scoped>
-  /* Add any specific styles here */
+ 
   </style>
   
