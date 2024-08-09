@@ -7,6 +7,7 @@
           <select v-model="selectedMembers" multiple class="border rounded w-full p-2 mb-4">
             <option v-for="member in projectTeamMembers" :key="member._id" :value="member._id">{{ getMemberName(member._id) }}</option>
           </select>
+          <AssignMembers v-model="selectedMembers" :projectTeamMembers="projectTeamMembers" />
     </BaseModal>
 </template>
 
@@ -18,6 +19,7 @@ import { User } from '@/interfaces/IUser';
 import { useUserStore } from '@/stores/userStore';
 import { useTaskStore } from '@/stores/taskStore';
 import { TeamMember } from '@/interfaces/ITeamMember';
+import AssignMembers from './AssignMembers.vue';
 
 
 const props = defineProps({listId: { type: String, required: true }, projectTeamMembers: { type: Array<TeamMember>, required: true } });
