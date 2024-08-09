@@ -6,7 +6,8 @@ export interface Task {
     listId: string;
     name: string;
     description: string;
-    assignedMembers: AssignedMember[]; // Array of User IDs
+    assignedMembers: AssignedMember[];
+    selectedMembers?: string[]; // Array of User IDs
     hoursAllocated: number;
     hoursUsed: number;
     status: 'todo' | 'inProgress' | 'done';
