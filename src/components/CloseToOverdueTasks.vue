@@ -19,8 +19,6 @@
       <!-- Message to show when there are no almost overdue tasks -->
       <p v-else class="text-gray-600">No tasks are close to being overdue.</p>
     </div>
-
-    {{  projectStore.projects }}
   </div>
 </template>
 
