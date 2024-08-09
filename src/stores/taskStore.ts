@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { Task, NewTask } from '../interfaces/ITask';
 import { TaskTemplate } from '@/interfaces/ITaskTemplate';
 import apiClient from '../services/apiClient';
-import { useListStore } from './listStore';
+import { uselistStore } from './listStore';
 
 export const useTaskStore = defineStore('task', () => {
   
@@ -20,7 +20,7 @@ export const useTaskStore = defineStore('task', () => {
   const taskTemplates = ref<TaskTemplate[]>([]);
 
 
-  const listStore = useListStore(); // Initialize the list store
+  const listStore = uselistStore(); // Initialize the list store
 
 
   //fetch tasks by list id

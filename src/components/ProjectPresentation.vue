@@ -17,7 +17,7 @@
   <script setup lang="ts">
   import { ref, computed, defineProps, onMounted } from 'vue';
   import { useTaskStore } from '@/stores/taskStore';
-  import { useListStore } from '@/stores/listStore';
+  import { uselistStore } from '@/stores/listStore';
   import TaskPresentation from '@/components/TaskPresentation.vue';
   import ListPresentation from '@/components/ListPresentation.vue';
   import { Task } from '@/interfaces/ITask';
@@ -25,7 +25,7 @@
   const props = defineProps<{ projectId: string, presentation: 'kanban' | 'trello', isLeader: boolean }>();
   
   const tasksStore = useTaskStore();
-  const listsStore = useListStore();
+  const listsStore = uselistStore();
   
   const statuses = ['todo', 'inProgress', 'done'];
   const statusLabels: { [key: string]: string } = {

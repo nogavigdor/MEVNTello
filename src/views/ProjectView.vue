@@ -33,7 +33,7 @@
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useProjectStore } from '@/stores/projectStore';
-import { useListStore } from '@/stores/listStore';
+import { uselistStore } from '@/stores/listStore';
 import { useTaskStore } from '@/stores/taskStore';
 import { Project } from '@/interfaces/IProject';
 import ProjectPresentation from '@/components/ProjectPresentation.vue'; // Adjust the path accordingly
@@ -42,7 +42,7 @@ import { NewList } from '@/interfaces/IList';
 
 const route = useRoute();
 const projectsStore = useProjectStore();
-const listsStore = useListStore();
+const listsStore = uselistStore();
 const tasksStore = useTaskStore();
 const userStore = useUserStore();
 

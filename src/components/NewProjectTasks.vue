@@ -21,7 +21,7 @@
   <script setup lang="ts">
   import { ref, onMounted, watch } from 'vue';
   import { useProjectStore } from '@/stores/projectStore';
-  import { useListStore } from '@/stores/listStore';
+  import { uselistStore } from '@/stores/listStore';
   import { useTaskStore } from '@/stores/taskStore';
   import { Project } from '@/interfaces/IProject';
   import { Task } from '@/interfaces/ITask';
@@ -36,7 +36,7 @@ import NewProjectTasksItem from './NewProjectTasksItem.vue';
   
   const route = useRoute();
   const projectStore = useProjectStore();
-  const listStore = useListStore();
+  const listStore = uselistStore();
   const tasksStore = useTaskStore();
   
   const projectId = route.query.projectId as string;

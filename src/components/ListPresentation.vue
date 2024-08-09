@@ -16,7 +16,7 @@
   <script setup lang="ts">
   import { ref, computed, defineProps } from 'vue';
   import { useTaskStore } from '@/stores/taskStore';
-  import { useListStore } from '@/stores/listStore';
+  import { uselistStore } from '@/stores/listStore';
   import { useUserStore } from '@/stores/userStore';
   import { useProjectStore } from '@/stores/projectStore';
   import TaskPresentation from './TaskPresentation.vue';
@@ -28,7 +28,7 @@
   const props = defineProps<{ list: List, projectId: string, isLeader: boolean }>();
 
   const tasksStore = useTaskStore();
-  const listsStore = useListStore();
+  const listsStore = uselistStore();
   const userStore = useUserStore();
   const projectStore = useProjectStore();
   const showAddTaskModal = ref(false);

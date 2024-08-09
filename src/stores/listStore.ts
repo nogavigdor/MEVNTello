@@ -4,7 +4,7 @@ import { ref, computed } from 'vue';
 import { List, NewList } from '@/interfaces/IList';
 import axios from 'axios';
 
-export const useListStore = defineStore('list', () => {
+export const uselistStore = defineStore('list', () => {
     const lists = ref<List[]>([]);
     
     //fetch lists by project id, set the lists array to the response data and return the lists array
