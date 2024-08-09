@@ -56,7 +56,7 @@ export const useProjectStore = defineStore('projects', () => {
     }
   };
 
-  const updateProject = async (projectData: Project) => {
+  const updateProject = async (projectData: Partial<Project>) => {
     try {
       const response = await apiClient.put(`/projects/${projectData._id}`, projectData);
       const index = projects.value.findIndex((p) => p._id === projectData._id);
@@ -112,6 +112,10 @@ export const useProjectStore = defineStore('projects', () => {
     return projects.value.find((p) => p._id === projectId);
   };
 
+  const getProjectIdByListId = (listId: string) => {
+    return projects.value.find((p) => p.lists?.find((listIdInProject) => listIdInProject === listId))?._id;
+  }
+
   // Get the role of a team member in a project
   const getTeamMemberRole = (projectId: string, memberId: string) => {
     const project = projects.value.find((p) => p._id === projectId);
@@ -150,6 +154,7 @@ export const useProjectStore = defineStore('projects', () => {
     addTeamMember,
     removeTeamMember,
     getProjectById,
+    getProjectIdByListId,
     getTeamMemberRole,
     fetchUserRole,
     isLeader,
