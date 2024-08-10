@@ -8,8 +8,8 @@
         <p>{{ project.description }}</p>
         <div class="flex space-x-2 mt-2">
           <span v-for="member in project.teamMembers" :key="member._id" class="text-sm">
-            {{ getUsername(member._id) }} <span v-if="member.role === 'leader'" class="text-primary">: Leader</span>
-            <span v-else class="text-secondary">(Member)</span>
+              <span v-if="member.role === 'leader'" class="text-textBold">{{ getUsername(member._id) }} (Leader)</span>
+            <span v-else class="text-text"> {{ getUsername(member._id) }}</span>
           </span>
         </div>
       </div>
@@ -18,7 +18,7 @@
         <StatusIcon :status="getProjectStatus" /> <span>{{ getProjectStatus }}</span>
       </div>
       <button @click="deleteProject">
-        <font-awesome-icon v-if="isAdminOrLeader"  icon="trash-alt" />
+        <font-awesome-icon class="text-red-500" v-if="isAdminOrLeader"  icon="trash-alt" />
       </button>
       <button @click="toggleDetails">
         <font-awesome-icon :icon="iconClass" />
@@ -121,7 +121,7 @@ const getProjectStatus = computed(() => {
   } if (isOverdue.value) {
     return 'overdue';
   } else {
-    return 'in progress';
+    return 'inProgress';
   }
 });
 
