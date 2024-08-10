@@ -49,16 +49,12 @@
               <input type="radio" :value="template._id" v-model="selectedTemplate">
               <span>{{ template.name }}</span>
             </div>
-            <div>
-              <input type="radio" value="" v-model="selectedTemplate">
-              <span>Start without template</span>
-            </div>
           </div>
         </div>
       </div>
-      <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded">Save Project and Continue</button>
+      <button type="submit" v-if="!isLoading" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded"
+      >Save Project and Continue</button><LoaderButton v-else />
     </form>
-   
   </div>
 </template>
   
@@ -72,6 +68,7 @@
   import { TaskTemplate } from '@/interfaces/ITaskTemplate';
   import { TeamMember } from '@/interfaces/ITeamMember';
   import { defineProps } from 'vue';
+  import LoaderButton from './LoaderButton.vue';
   
   import router from '@/router';
 
@@ -87,17 +84,11 @@
   const selectedTemplate = ref<string | undefined>(undefined); // Update the type of selectedTemplate ref
   const selectedTeamMembers = ref<string[]>([]); // Declare selectedTeamMembers ref
 
-  
-  onMounted(async () => {
-    await userStore.fetchAllUsers();
-    await tasksStore.fetchTaskTemplates();
-    console.log('all task tamplates', tasksStore.taskTemplates);
-    users.value = userStore.getUsers;
-    users.value.forEach(user => roles.value[user._id] = 'member'); // Default to 'member'
-  });
+  const isLoading = ref<boolean>(false);
+
   const loggedInUser = computed(() => userStore.user?._id);
 
-  const filteredUsers = computed(() => users.value.filter(user => user._id !== loggedInUser.value));
+  const filteredUsers = computed(() => users.value.filter(user => user._id !== loggedInUser.value && user.role !== 'admin'));
   
   const taskTemplates = computed(() => tasksStore.taskTemplates);
   
@@ -130,11 +121,13 @@
   
   // Submit form data including dynamic role assignments
   const submitForm = async () => {
+    isLoading.value = true;
+
     const projectData: Project = {
       ...form.value,
       //overides default form values with the form input values
       creationStatus: 'tasks',
-      selectedTemplate: selectedTemplate.value,
+      selectedTemplate: selectedTemplate.value??'',
       startDate: new Date(form.value.startDate),
       endDate: new Date(form.value.endDate),
       teamMembers: selectedTeamMembers.value.map(_id => ({
@@ -161,7 +154,17 @@
     } catch (error) {
       alert('Failed to create project');
       console.error(error);
+      isLoading.value = false;
     }
   };
+
+  onMounted(async () => {
+    await userStore.fetchAllUsers();
+    await tasksStore.fetchTaskTemplates();
+    console.log('all task tamplates', tasksStore.taskTemplates);
+    users.value = userStore.getUsers;
+    users.value.forEach(user => roles.value[user._id] = 'member'); // Default to 'member'
+    console.log('The user is',userStore.user);
+  });
   </script>
   
