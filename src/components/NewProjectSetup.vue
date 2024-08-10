@@ -52,7 +52,7 @@
           </div>
         </div>
       </div>
-      <button type="submit" v-if="!isLoading" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded"
+      <button type="submit" v-if="!isLoading" class="bg-accent hover:bg-primary-dark text-white font-bold py-2 px-4 rounded"
       >Save Project and Continue</button><LoaderButton v-else />
     </form>
   </div>
