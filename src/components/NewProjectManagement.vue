@@ -12,7 +12,9 @@
             </ul>
         </ul>
     </div>
-    <button @click="completeStage" class="bg-accent text-white py-2 px-4 rounded mt-4">Save and Complete</button>
+    <button v-if="!isLoading" @click="completeStage" class="bg-accent text-white py-2 px-4 rounded mt-4">Save and Continue</button>
+    <LoaderButton v-else />
+    <progress v-if="isLoading" :value="progress" :max="totalItems" class="w-full"></progress>
   </template>
   
   <script setup lang="ts">
@@ -23,27 +25,32 @@
   import { Project } from '@/interfaces/IProject';
   import { Task } from '@/interfaces/ITask';
   import { List } from '@/interfaces/IList';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import ListPresentation from './ListPresentation.vue';
   import { TaskTemplate } from '@/interfaces/ITaskTemplate';
-  import router from '@/router';
 import { add } from 'lodash';
 import { randomString } from '@/utils/randomString';
 import NewProjectTasksItem from './NewProjectTasksItem.vue';
 import AssignMembers from './AssignMembers.vue';
 import { getMemberName } from '@/utils/getMemberName';
+import LoaderButton from './LoaderButton.vue';
+
 
   const route = useRoute();
+  const router = useRouter();
   const projectStore = useProjectStore();
   const listStore = uselistStore();
   const tasksStore = useTaskStore();
   //holds the current project id which is fetched from the url params
   const projectId = route.query.projectId as string;
-  const isLoading = ref<boolean>(true);
+  const isLoading = ref<boolean>(false);
   const project = ref<Project | null>(null);
   const lists = ref<List[]>([]);
   const tasks = ref<Task[] | null>([]);
 
+  const progress = ref<number>(0);
+  const totalItems = computed(() => (tasks?.value?.length || 0) + 1);
+ 
  
 
   //building the lists tasks presentations according to the selected template
@@ -81,8 +88,12 @@ const projectTeamMembers = computed(() => {
 
 
   const completeStage = async () => {
+    isLoading.value = true;
+
     //runs over the tasks and updates the hours allocated, hours used and assigned members
         for (const task of tasks.value ?? []) {
+          progress.value++;
+
           await tasksStore.updateTask(task._id, {  
             hoursAllocated: task.hoursAllocated,
             assignedMembers : task.selectedMembers?.map(id => {
@@ -102,7 +113,8 @@ const projectTeamMembers = computed(() => {
     //const createdLists = await listStore.fetchLists(project.value._id ?? '');
     // Updating the project with the new lists that were created and the creation status
     //project.value.lists = createdLists?.map(list => list._id); // Get only the IDs of the lists
-    await projectStore.updateProject(
+    progress.value++;
+    const updatedProject = await projectStore.updateProject(
       {
        _id: project.value?._id, 
       creationStatus: 'complete',
@@ -116,10 +128,10 @@ const projectTeamMembers = computed(() => {
     //delete newProject.__v;
     
     
-
+    
     // The navigational guard will redirect the user to the project view
     //and the user will be able to see the new project that was created
-    router.replace(`/projects/${project.value?._id}`);
+    router.replace(`/projects/${updatedProject._id}`);
 
   };
  
