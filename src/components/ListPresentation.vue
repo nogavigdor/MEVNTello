@@ -1,10 +1,10 @@
 <template>
     <div class="bg-gray-100 rounded-lg p-4 w-80">
-      {{ isLeader }}
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">{{ list.name }}</h2>
+        <h2 class="text-xl font-semibold">
+         <input v-model="list.name" @change="updateListName" v-if="isLeader" />
+        </h2>
         <div v-if="isLeader" class="space-x-2">
-          <button class="text-blue-500 hover:text-blue-700" @click="editList(list._id)">✏️</button>
           <button class="text-red-500 hover:text-red-700" @click="deleteList(list._id)">🗑️</button>
         </div>
       </div>
@@ -24,6 +24,7 @@
   import { NewTask } from '@/interfaces/ITask';
   import { User } from '@/interfaces/IUser';
   import AddTaskModal from './AddTaskModal.vue';
+  import { debounce} from 'lodash';
   
   const props = defineProps<{ list: List, projectId: string, isLeader: boolean }>();
 
@@ -56,10 +57,10 @@
   // const isLeader = computed(() => {
   //  return project.value?.teamMembers.some(member => member._id === userStore.user?._id && member.role === 'leader') || userStore.user?.role === 'admin';
   //});
-  
-  const editList = (listId: string) => {
-    const currentList = listsStore.lists.find(list => list._id === listId);
-  };
+
+  const updateListName = debounce(async () => {
+    listsStore.updateList({ _id: props.list._id, name: props.list.name });
+  }, 300);
   
   const deleteList = async (listId: string) => {
     await listsStore.deleteList(listId); // Ensure this function is correctly imported from your store
