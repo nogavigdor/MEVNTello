@@ -1,8 +1,11 @@
 <template>
-    <div class="flex space-x-4 overflow-x-auto mt-8">
+    <div cla>
         <h1 class="text-2xl font-bold text-primary">{{ project?.name}}</h1>
-        <h2> Total Hours Allocated: {{  totalAllocatedHours }}/{{  project?.allocatedHours }}</h2>
-        .<ul v-for="list in lists" :key="list._id" class="flex-col space-x-4">
+        <h2 class="text-darkOrange font-bold"> Total Hours Allocated: {{  totalAllocatedHours }}/{{  project?.allocatedHours }}</h2>
+    </div>
+
+    <div class="flex space-y-4 overflow-x-auto mt-8">
+        <ul v-for="list in lists" :key="list._id" class="flex-col space-x-4">
             {{ list.name }}
             <ul v-for="task in tasks?.filter(task => task.listId === list._id)" class="flex-col space-y-4">
                
