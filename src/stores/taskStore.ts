@@ -85,7 +85,6 @@ export const useTaskStore = defineStore('task', () => {
     //takssByListId should be updat
     const getProjectIdForTask = (taskId: string) => {
       const task = userTasks.value.find(t => t._id === taskId);
-      console.log("TASK -> Project ID:", task);
       if (task) {
         console.log("PROJECTS: ", projectStore.projects);
         const projectId = projectStore.getProjectIdByListId(task.listId);
