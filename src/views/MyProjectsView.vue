@@ -10,7 +10,9 @@
       </router-link>
     </div>
     <ul v-if="projects.length>0" class="space-y-4">
-      <ProjectItem v-for="project in projects" :key="project._id" :project="project" />
+      <ProjectItem v-for="project in projects"
+                   :key="project._id" :project="project" 
+                   @project-deleted="removeProjectFromList" />
     </ul>
     <ul v-else>
       <p>No projects are found.</p>
@@ -58,8 +60,15 @@ const fetchProjects = async () => {
   }
 };
 
+// Method to remove project from the list
+const removeProjectFromList = (projectId: string) => {
+  projects.value = projects.value.filter(project => project._id !== projectId);
+};
+
 // Fetch projects on component mount
-onMounted(fetchProjects);
+onMounted(
+  fetchProjects
+);
 
 
 
