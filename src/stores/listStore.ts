@@ -29,7 +29,7 @@ export const uselistStore = defineStore('list', () => {
     };
 
     //update a list by id, find the index of the list in the lists array and update the list at that index with the response data
-   const updateList = async (listData: List) => {
+   const updateList = async (listData: Partial<List>) => {
         try {
         const response = await apiClient.put(`/lists/${listData._id}`, listData);
         const index = lists.value.findIndex((l) => l._id === listData._id);
