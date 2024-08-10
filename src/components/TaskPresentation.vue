@@ -1,7 +1,8 @@
 <template>
     <div class="bg-white rounded-lg p-4 shadow-md">
       <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-medium">{{ task.name }}</h3>
+        <h3 class="text-lg font-medium">{{ !isAdmin&&!isLeader? task.name:'' }}</h3>
+        <input v-model="task.name" @change="updateTask({ name: task.name })" v-if="isAdmin || isLeader" />
         <div v-if="isLeader || isTaskMember(task)" class="space-x-2">
           <button v-if="isLeader" class="text-red-500 hover:text-red-700" @click="deleteTask(task._id)">🗑️</button>
         </div>
@@ -57,6 +58,8 @@
   const userStore = useUserStore();
   const projectStore = useProjectStore();
 
+  const isAdmin = computed(() => userStore.user?.role === 'admin');
+
   const inputHoursUsed = ref(props.task.hoursUsed);
   
   const project = computed<Project | undefined>(() => projectStore.getProjectById(props.projectId));
@@ -74,6 +77,9 @@
   
 const updateMemberUsedHours = debounce(async (memberId: string, usedHours: number) => {
   await tasksStore.updateMemberUsedHours(props.task._id, memberId, usedHours);
+  if (usedHours > 0 && props.task.status === 'todo') {
+    await tasksStore.updateTask(props.task._id, { status: 'inProgress' });
+  }
 }, 300);
 
   const deleteTask = async (taskId: string) => {
