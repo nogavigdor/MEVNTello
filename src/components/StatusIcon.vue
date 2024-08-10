@@ -24,7 +24,7 @@
       case 'overdue':
         return 'text-red-500';
       default:
-        return 'text-gray-500';
+        return 'text-purple-500';
     }
   });
   
