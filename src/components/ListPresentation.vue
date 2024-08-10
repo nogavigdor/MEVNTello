@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-100 rounded-lg p-4 w-80" @drop="console.log($event)" @dragover.prevent @dragenter.prevent>
+    <div class="bg-gray-100 rounded-lg p-4 w-80">
       {{ isLeader }}
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold">{{ list.name }}</h2>
