@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white rounded-lg p-4 shadow-md">
+    <div class="bg-white rounded-lg p-4 shadow-md" draggable="true" @dragstart="startDrag($event, task)">
       <div class="flex justify-between items-center mb-2">
         <h3 class="text-lg font-medium">{{ task.name }}</h3>
         <div v-if="isLeader || isTaskMember(task)" class="space-x-2">
@@ -50,6 +50,7 @@
   import { debounce} from 'lodash';
   import EditTaskModal from './EditTaskModal.vue';
   import { TeamMember } from '@/interfaces/ITeamMember';
+  import { useDraggable } from '@vueuse/core';
   
   const props = defineProps<{ task: Task, projectId: string, isLeader: boolean, projectTeamMembers: TeamMember[] }>();
   
@@ -102,6 +103,14 @@ const totalProgress = computed(() => {
 
 const amImemberInTask = (member: AssignedMember) => {
   return member._id === userStore.user?._id;
+};
+
+const startDrag = (event: DragEvent, task: Task) => {
+  console.log("startDrag", event);
+  if (!event.dataTransfer) return;
+  event.dataTransfer.dropEffect = 'move';
+  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.setData('task_id', task._id);
 };
   </script>
   
