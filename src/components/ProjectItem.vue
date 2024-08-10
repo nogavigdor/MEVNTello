@@ -17,6 +17,9 @@
         <p :class="{'text-red-500': isOverdue}">{{ formatDate(project.endDate) }}</p>
         <StatusIcon :status="getProjectStatus" /> <span>{{ getProjectStatus }}</span>
       </div>
+      <button @click="deleteProject">
+        <font-awesome-icon v-if="isAdminOrLeader"  icon="trash-alt" />
+      </button>
       <button @click="toggleDetails">
         <font-awesome-icon :icon="iconClass" />
       </button>
@@ -40,7 +43,7 @@
   </li>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, computed, watch, defineProps} from 'vue';
+import { onMounted, ref, computed, watch, defineProps, defineEmits} from 'vue';
 import { useProjectStore } from '@/stores/projectStore';
 import { useUserStore } from '@/stores/userStore';
 import { useTaskStore } from '@/stores/taskStore';
@@ -49,9 +52,11 @@ import StatusIcon from '@/components/StatusIcon.vue';
 import AdminOptions from '@/components/AdminOptions.vue';
 import { Project } from '@/interfaces/IProject';
 import { Task } from '@/interfaces/ITask';
+import { TeamMember } from '@/interfaces/ITeamMember';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 const props = defineProps(["project"]);
+const emit = defineEmits(['project-deleted']);
 
 const showDetails = ref(false);
 
@@ -68,7 +73,14 @@ const projectStore = useProjectStore();
 const userStore = useUserStore();
 const taskStore = useTaskStore();
 
-const isAdminOrLeader = computed(() => userStore.user?.role === 'admin' || props.project.role === 'leader');
+const isAdminOrLeader = computed(() => {
+  const isAdmin = userStore.user?.role === 'admin';
+  // Check if the current user is a leader of the project
+  const isLeader = props.project.teamMembers.some(
+    (member: TeamMember) => member._id === userStore.user?._id && member.role === 'leader'
+  );
+  return isAdmin || isLeader;
+});
 
 const projectTasks = ref<Task[]>([]);
 
@@ -90,6 +102,12 @@ const getUsername = computed(() => {
   };
 });
 
+const deleteProject = async () => {
+  await projectStore.deleteProject(props.project._id);
+  // Emit event to the parent to remove the project from the list
+  emit('project-deleted', props.project._id);
+};
+
 onMounted( async () => {
   await fetchTasksForByProject();
   await userStore.fetchAllUsers();
@@ -103,7 +121,7 @@ const getProjectStatus = computed(() => {
   } if (isOverdue.value) {
     return 'overdue';
   } else {
-    return 'inProgress';
+    return 'in progress';
   }
 });
 
