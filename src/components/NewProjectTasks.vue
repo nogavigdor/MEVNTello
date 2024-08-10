@@ -15,11 +15,13 @@
         <input type="text" v-model="newListName" class="border border-gray-300 p-2" />
         <button @click="addList" class="bg-green-500 text-white py-2 px-4 rounded">Add List</button>
     </div>
-    <button @click="completeStage" class="bg-accent text-white py-2 px-4 rounded mt-4">Save and Continue</button>
+    <button v-if="!isLoading" @click="completeStage" class="bg-accent text-white py-2 px-4 rounded mt-4">Save and Continue</button>
+    <LoaderButton v-else />
+    <progress v-if="isLoading" :value="progress" :max="totalItems" class="w-full"></progress>
   </template>
   
   <script setup lang="ts">
-  import { ref, onMounted, watch } from 'vue';
+  import { ref, onMounted, watch, computed } from 'vue';
   import { useProjectStore } from '@/stores/projectStore';
   import { uselistStore } from '@/stores/listStore';
   import { useTaskStore } from '@/stores/taskStore';
@@ -33,6 +35,7 @@
 import { add } from 'lodash';
 import { randomString } from '@/utils/randomString';
 import NewProjectTasksItem from './NewProjectTasksItem.vue';
+import LoaderButton from './LoaderButton.vue';
   
   const route = useRoute();
   const projectStore = useProjectStore();
@@ -40,12 +43,15 @@ import NewProjectTasksItem from './NewProjectTasksItem.vue';
   const tasksStore = useTaskStore();
   
   const projectId = route.query.projectId as string;
-  const isLoading = ref<boolean>(true);
+  const isLoading = ref<boolean>(false);
   const project = ref<Project | null>(null);
   const lists = ref<List[]>([]);
   const tasksByListId = ref<{ [key: string]: Task[] }>({});
   const newListName = ref<string>('');
   const newTaskName = ref<string>('');
+
+  const progress = ref<number>(0);
+  const totalItems = computed(() => (selectedTasksTemplate?.value?.lists.length || 0) + 2);
  
   const selectedTasksTemplate = ref<TaskTemplate | null>(null);
 
@@ -61,8 +67,6 @@ import NewProjectTasksItem from './NewProjectTasksItem.vue';
       }
     } catch (error) {
       console.error('Error fetching project or tasks:', error);
-    } finally {
-      isLoading.value = false;
     }
   });
   
@@ -87,8 +91,12 @@ import NewProjectTasksItem from './NewProjectTasksItem.vue';
 
 
   const completeStage = async () => {
+    isLoading.value = true;
+
     if (project.value) {
        for (const list of selectedTasksTemplate.value?.lists || []) {
+        progress.value++;
+
         const newList = await listStore.createList({ name: list.name, projectId: project.value?._id ?? '', tasks: [] });
         for (const task of list.tasks) {
           await tasksStore.createTask(newList._id, {  
@@ -130,7 +138,9 @@ import NewProjectTasksItem from './NewProjectTasksItem.vue';
     if (!project.value) {
       return;
     }
+    progress.value++;
     const createdLists = await listStore.fetchLists(project.value._id ?? '');
+   
     // Updating the project with the new lists that were created and the creation status
     project.value.lists = createdLists?.map(list => list._id); // Get only the IDs of the lists
     project.value.creationStatus = 'management';
@@ -139,6 +149,7 @@ import NewProjectTasksItem from './NewProjectTasksItem.vue';
     }
     delete newProject.__v;
     
+    progress.value++;
     await projectStore.updateProject(newProject);
 
     // The navigational guard will redirect the user to the next stage
