@@ -1,5 +1,5 @@
 <template>
-    <div cla>
+    <div>
         <h1 class="text-2xl font-bold text-primary">{{ project?.name}}</h1>
         <h2 class="text-darkOrange font-bold"> Total Hours Allocated: {{  totalAllocatedHours }}/{{  project?.allocatedHours }}</h2>
     </div>
