@@ -59,11 +59,13 @@ const routes = [
     path : '/projects',
     name : 'Projects',
     component : () => import('../views/MyProjectsView.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/projects/new',
     name: 'NewProject',
     component: () => import('../views/NewProjectView.vue'),
+    meta: { requiresAuth: true }
 
   },
   {
@@ -71,6 +73,7 @@ const routes = [
     name: 'Project',
     component: () => import('../views/ProjectView.vue'),
     beforeEnter: checkProjectCreationStatus,
+    meta: { requiresAuth: true }
   
   }
 
