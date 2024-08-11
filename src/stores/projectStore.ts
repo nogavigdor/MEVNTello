@@ -10,6 +10,8 @@ export const useProjectStore = defineStore('projects', () => {
   const userStore = useUserStore();
   const currentRole = ref<string | null>(null);
 
+  //will fetch all projects the user is part of - whether as a leader or a team member
+  //if admin, will fetch all projects
   const fetchProjects = async () => {
     try {
       const response = await apiClient.get('/projects');

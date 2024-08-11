@@ -7,6 +7,7 @@
             <h2 class="text-xl font-semibold text-gray-900">Welcome back!</h2>
             <p class="text-gray-600">Here's what's happening with your projects today:</p>
           </div>
+          <ProjectStatusSummary :projects="projects" />
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="p-4 bg-white rounded-lg shadow">
               <h3 class="font-semibold text-gray-900">About to be overdue tasks</h3>
@@ -23,9 +24,23 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import { useProjectStore } from '@/stores/projectStore';
 import CloseToOverdueTasks from '@/components/CloseToOverdueTasks.vue';
+import ProjectStatusSummary from '@/components/ProjectStatusSummary.vue';
+
+const projectsStore = useProjectStore();
+
+const projects = computed(() => projectsStore.projects);
+
+  onMounted(async () => {
+    try {
+      // Fetch all projects for the user
+      await projectsStore.fetchProjects();
+    } catch (error:any) {
+      console.error(error);
+    }
+  });
  
   </script>
   

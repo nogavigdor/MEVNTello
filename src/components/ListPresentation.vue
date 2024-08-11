@@ -2,10 +2,11 @@
     <div class="bg-gray-100 rounded-lg p-4 w-80">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold">
-         <input v-model="list.name" @change="updateListName" v-if="isLeader" />
+         <input v-model="list.name" @change="updateListName" v-if="isAdmin || isLeader" />
+         <span v-else>{{ list.name }}</span>
         </h2>
         <div v-if="isLeader" class="space-x-2">
-          <button class="text-red-500 hover:text-red-700" @click="deleteList(list._id)">🗑️</button>
+          <button class="text-red-500 hover:text-red-700" @click="deleteList(list._id)"><font-awesome-icon icon="trash" class="text-red-500 hover:text-red-700" /></button>
         </div>
       </div>
       <TaskPresentation v-for="task in tasksStore.tasksByListId[list._id]" :key="task._id" :task="task" :projectId="props.projectId" :projectTeamMembers="projectTeamMembers" :isLeader="isLeader" />
@@ -24,6 +25,9 @@
   import { NewTask } from '@/interfaces/ITask';
   import { User } from '@/interfaces/IUser';
   import AddTaskModal from './AddTaskModal.vue';
+  import { library } from '@fortawesome/fontawesome-svg-core';
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+  import { faTrash } from '@fortawesome/free-solid-svg-icons';
   import { debounce} from 'lodash';
   
   const props = defineProps<{ list: List, projectId: string, isLeader: boolean }>();
@@ -44,6 +48,8 @@
     listId: props.list._id,
     subTasks: []
   });
+
+  const isAdmin = computed(() => userStore.isAdmin);
   
   const project = computed(() => projectStore.getProjectById(props.projectId));
   const projectTeamMembers = computed(() => project.value?.teamMembers || []);

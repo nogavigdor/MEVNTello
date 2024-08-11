@@ -1,8 +1,8 @@
 <template>
   <div class="p-6">
-    <h1 class="text-3xl font-bold mb-4">{{ project?.name }}</h1>
-    <p class="mb-6">{{ project?.description }}</p>
-    <p>You have a <span>{{ isLeader ? 'leader' : 'member' }}</span> role in this project</p>
+    <h1 class="text-2xl text-green-500 font-bold mb-4">{{ project?.name }}</h1>
+    <p class="mb-6 text-green-500 text-xl">{{ project?.description }}</p>
+    <p>You are a <span class="text-darkOrange">{{ isLeader ? 'leader' : 'member' }}</span>  in this project</p>
     
     <div class="flex justify-end mb-4">
       <button @click="togglePresentation" class="bg-blue-500 text-white p-2 rounded">

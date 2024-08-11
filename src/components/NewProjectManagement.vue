@@ -85,7 +85,7 @@ const projectTeamMembers = computed(() => {
   });
 
   const totalAllocatedHours = computed(() => {
-    return tasks.value?.reduce((acc, task) => acc + task.hoursAllocated, 0) ?? 0;
+      return tasks.value?.reduce((acc, task) => acc + parseInt(String(task.hoursAllocated)), 0) ?? 0;
   });
 
 

@@ -4,7 +4,7 @@
         <h3 class="text-lg font-medium">{{ !isAdmin&&!isLeader? task.name:'' }}</h3>
         <input v-model="task.name" @change="updateTask({ name: task.name })" v-if="isAdmin || isLeader" />
         <div v-if="isLeader || isTaskMember(task)" class="space-x-2">
-          <button v-if="isLeader" class="text-red-500 hover:text-red-700" @click="deleteTask(task._id)">🗑️</button>
+          <button v-if="isLeader || isAdmin" class="text-red-500 hover:text-red-700" @click="deleteTask(task._id)">  <font-awesome-icon icon="trash" class="text-red-500 hover:text-red-700" /></button>
         </div>
       </div>
       <div class="flex mb-2">
@@ -24,7 +24,7 @@
       <p class="mb-2">Allocated Hours: <input v-if="isAdmin || isLeader" v-model="task.hoursAllocated" @change="allocatedHours" type="number" /> <span v-else >{{ task.hoursAllocated }}</span></p>
       <div v-if="(isAdmin || isLeader) && task.assignedMembers.length === 0" class="mb-2">
         <AssignMembers v-model="selectedMembers" :projectTeamMembers="projectTeamMembers" />
-        <button @click="assignMembers">Assign Members</button>
+        <button class="bg-green-500 text-white p-2" @click="assignMembers">Assign Members</button>
       </div>
       <div v-for="member in task.assignedMembers" :key="member._id" class="mb-2">
       <p class="mb-2">{{ member.username }}'s Used Hours: 
@@ -57,6 +57,10 @@
   import { TeamMember } from '@/interfaces/ITeamMember';
   import AssignMembers from './AssignMembers.vue';
 import { getMemberName } from '@/utils/getMemberName';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+library.add( faTrash);
   
   const props = defineProps<{ task: Task, projectId: string, isLeader: boolean, projectTeamMembers: TeamMember[] }>();
   
@@ -78,11 +82,13 @@ import { getMemberName } from '@/utils/getMemberName';
     return props.task.assignedMembers.some(member => member._id === userStore.user?._id);
   };
 
+  //going through the ids of the selected members and mapping them to the assigned members of the task
   const assignMembers = async () => {
     const assignedMembers: AssignedMember[] = selectedMembers.value.map(memberId => {
       const member = props.projectTeamMembers.find(member => member._id === memberId);
       return member ? { _id: member._id, username: getMemberName(memberId), role: member.role, usedHours: 0 } : { _id: memberId, username: 'Unknown', role: 'member', usedHours: 0 };
     });
+    //updating the task with the assigned members as part of the task object
     await tasksStore.updateTask(props.task._id, { assignedMembers });
   };
   
