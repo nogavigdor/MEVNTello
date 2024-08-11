@@ -55,9 +55,16 @@ const projects = ref<Project[]>([]);
 // Function to fetch projects for the current user
 const fetchProjects = async () => {
   if (userId.value) {
+    //if admin it fetches all projects
+    if (isAdmin.value) {
+      const fetchedProjects = await projectsStore.fetchProjects();
+      projects.value = fetchedProjects.map((project) => ({ ...project, showDetails: false }));
+    } else {
+    //if not admin it fetches only the projects for the logged in user
     const fetchedProjects = await projectsStore.fetchProjectByUserId(userId.value);
     projects.value = fetchedProjects.map((project) => ({ ...project, showDetails: false }));
   }
+};
 };
 
 // Method to remove project from the list
